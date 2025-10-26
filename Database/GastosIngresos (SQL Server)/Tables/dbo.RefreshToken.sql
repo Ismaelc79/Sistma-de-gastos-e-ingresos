@@ -1,4 +1,4 @@
-USE [SIGAPER]
+USE [GastosIngresos]
 
 ----------------------------------------------
 -- User: Briangel.Abreu						--
