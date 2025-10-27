@@ -1,0 +1,27 @@
+{
+  "name": "sistma-de-gastos-e-ingresos",
+  "version": "1.0.0",
+  "description": "Este es el proyecto de sistema de gastos e ingresos, se realiazara en diferentes etapas",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"No tests configured\"",
+    "husky-on": "git config core.hooksPath commitlint/.husky",
+    "husky-off": "git config core.hooksPath .git/hooks"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ismaelc79/Sistma-de-gastos-e-ingresos.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ismaelc79/Sistma-de-gastos-e-ingresos/issues"
+  },
+  "homepage": "https://github.com/Ismaelc79/Sistma-de-gastos-e-ingresos#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "husky": "^9.1.7"
+  }
+}
