@@ -52,3 +52,6 @@ Thumbs.db
 
 # TypeScript build info
 *.tsbuildinfo
+**/bin/
+**/obj/
+**/.vs/
