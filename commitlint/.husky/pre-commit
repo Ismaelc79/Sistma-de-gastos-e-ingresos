@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-# No pre-commit tasks for now
-exit 0

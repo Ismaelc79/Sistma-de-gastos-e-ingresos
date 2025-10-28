@@ -1,2 +1,0 @@
-#!/usr/bin/env sh
-npx --no -- commitlint --config commitlint/commitlint.config.cjs --edit "${1}"
