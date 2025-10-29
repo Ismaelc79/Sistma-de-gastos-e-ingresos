@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Persistence.Context
 {
-    internal class DapperContext
+    public class DapperContext
     {
         private readonly string _connectionString;
 
