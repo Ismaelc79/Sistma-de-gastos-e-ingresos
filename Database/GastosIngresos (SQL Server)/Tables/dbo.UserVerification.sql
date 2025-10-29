@@ -9,10 +9,10 @@ USE [GastosIngresos]
 CREATE TABLE dbo.[UserVerification] (
 	ID			CHAR(26)		PRIMARY KEY,
 	UserId		CHAR(26)		NOT NULL,
-	Coded		CHAR(10),
+	Code		CHAR(10),
 	ExpiresAt	DATETIME		CONSTRAINT DF_UserVerification_EspiresAt DEFAULT GETDATE(),
 	Used		BIT				CONSTRAINT DF_UserVerification_Used DEFAULT 0 NOT NULL,
-	CreateAt	DATETIME		CONSTRAINT DF_UserVerification_CreateAt DEFAULT GETDATE() NOT NULL,
+	CreatedAt	DATETIME		CONSTRAINT DF_UserVerification_CreateAt DEFAULT GETDATE() NOT NULL,
 	CONSTRAINT FK_UserVerification_User FOREIGN KEY (UserId)
 		REFERENCES dbo.[User](ID)
 		ON UPDATE CASCADE
