@@ -1,15 +1,29 @@
-namespace Domain.Entities;
-
-public class Transaction
+namespace Domain.Entities
 {
-    public int Id { get; set; }
-    public int CategoryId { get; set; }
-    public string UserId { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string? Description { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public class Transaction
+    {
+        public int Id { get; private set; }
+        public string Name { get; private set; }
+        public string? Description { get; private set; }
+        public int CategoryId { get; private set; }
+        public Category Category { get; private set; }
+        public Ulid UserId { get; private set; }
+        public User User { get; private set; }
+        public DateTime CreatedAt { get; private set; }
 
-    // Navigation properties
-    public Category? Category { get; set; }
-    public User? User { get; set; }
+        public decimal Amount { get; private set; } // Podemos agregar
+
+        public Transaction(string name, decimal amount, int categoryId, Ulid userId, string? description = null)
+        {
+            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Nombre obligatorio");
+            if (amount <= 0) throw new ArgumentException("Monto debe ser mayor que cero");
+
+            Name = name;
+            Amount = amount;
+            CategoryId = categoryId;
+            UserId = userId;
+            Description = description;
+            CreatedAt = DateTime.UtcNow;
+        }
+    }
 }

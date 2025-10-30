@@ -10,6 +10,7 @@ CREATE TABLE dbo.[Transaction] (
 	UserId			CHAR(26)		NOT NULL,
 	Name			VARCHAR(50)		NOT NULL,
 	Description		NVARCHAR(255),
+	Amount			DECIMAL,
 	CreatedAt		DATETIME		CONSTRAINT DF_Transaction_CreateAt DEFAULT GETDATE(),
 
 	CONSTRAINT FK_Transaction_Category

@@ -1,22 +1,78 @@
-namespace Domain.Entities;
-
-public class User
+namespace Domain.Entities
 {
-    public string Id { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string PasswordHash { get; set; } = string.Empty;
-    public string? Phone { get; set; }
-    public string Currency { get; set; } = "USD";
-    public string Language { get; set; } = "English";
-    public string? Avatar { get; set; }
-    public bool IsVerified { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public class User
+    {
+        public Ulid Id { get; private set; }
+        public string Name { get; private set; }
+        public Email Email { get; private set; }
+        public Password PasswordHash { get; private set; }
+        public PhoneNumber? Phone { get; private set; }
+        public Currency Currency { get; private set; }
+        public string Language { get; private set; }
+        public string? Avatar { get; private set; }
+        public bool IsVerified { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public DateTime UpdatedAt { get; private set; }
 
-    // Navigation properties
-    public ICollection<Category> Categories { get; set; } = new List<Category>();
-    public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
-    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
-    public ICollection<UserVerification> UserVerifications { get; set; } = new List<UserVerification>();
+        // Relaciones
+        public List<Category> Categories { get; private set; } = new();
+        public List<Transaction> Transactions { get; private set; } = new();
+        public List<UserVerification> Verifications { get; private set; } = new();
+        public List<RefreshToken> RefreshTokens { get; private set; } = new();
+
+        public User(Ulid id, string name, Email email, Password password,
+                    PhoneNumber? phone = null, Currency? currency = null,
+                    string language = "English", string? avatar = null)
+        {
+            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Nombre obligatorio");
+
+            Id = id;
+            Name = name;
+            Email = email;
+            PasswordHash = password;
+            Phone = phone;
+            Currency = currency ?? new Currency("DO");
+            Language = language;
+            Avatar = avatar;
+            IsVerified = false;
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void UpdateProfile(string? name = null, PhoneNumber? phone = null,
+                                  Currency? currency = null, string? language = null,
+                                  string? avatar = null)
+        {
+            if (!string.IsNullOrWhiteSpace(name)) Name = name;
+            if (phone != null) Phone = phone;
+            if (currency != null) Currency = currency;
+            if (!string.IsNullOrWhiteSpace(language)) Language = language;
+            if (!string.IsNullOrWhiteSpace(avatar)) Avatar = avatar;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void Verify() => IsVerified = true;
+    }
+
+    public class Currency
+    {
+        private string v;
+
+        public Currency(string v)
+        {
+            this.v = v;
+        }
+    }
+
+    public class PhoneNumber
+    {
+    }
+
+    public class Password
+    {
+    }
+
+    public class Email
+    {
+    }
 }
