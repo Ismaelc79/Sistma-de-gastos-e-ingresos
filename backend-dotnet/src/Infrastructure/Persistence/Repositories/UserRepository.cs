@@ -1,0 +1,81 @@
+﻿using Dapper;
+using Domain.Entities;
+using Domain.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Infrastructure.Persistence.Repositories
+{
+    public class UserRepository : IUserRepository
+    {
+        private readonly IDbConnection _connection;
+        private readonly IDbTransaction _transaction;
+
+        public UserRepository(IDbConnection connection, IDbTransaction transaction)
+        {
+            _connection = connection;
+            _transaction = transaction;
+        }
+
+        public async Task AddAsync(User user)
+        {
+            const string sql = @"
+                INSERT INTO dbo.User (ID, Name, Email, PasswordHash, Phone, Currency, Language, Avatar) 
+                VALUES (@ID, @Name, @Email, @PasswordHash, @Phone, @Currency, @Language, @Avatar)
+            ";
+
+            await _connection.ExecuteAsync(
+                sql,
+                new { ID = user.Id, Name = user.Name, Email = user.Email, PasswordHas = user.PasswordHash, Phone = user.Phone, Currency = user.Currency, Language = user.Language, Avatar = user.Avatar },
+                _transaction
+            );
+        }
+
+        public async Task<User?> GetByEmailAsync(string email)
+        {
+            const string sql = @"
+                SELECT * FROM dbo.User
+                WHERE Email = @Email
+            ";
+
+            return await _connection.QueryFirstOrDefaultAsync<User>(
+                sql,
+                new { Email = email },
+                _transaction
+            );
+        }
+
+        public async Task<User?> GetByIdAsync(string id)
+        {
+            const string sql = @"
+                SELECT * FROM dbo.User
+                WHERE ID = ID
+            ";
+
+            return await _connection.QueryFirstOrDefaultAsync<User>(
+                sql,
+                new { ID = id },
+                _transaction
+            );
+        }
+
+        public async Task UpdateAsync(User user)
+        {
+            const string sql = @"
+                UPDATE FROM dbo.User
+                SET Name = @Name, Email = @Email, PasswordHash = @PasswordHash, Phone = @Phone, Currency = @Currency, Language = @Language, Avatar = @Avatar
+                WHERE ID = ID
+            ";
+
+            await _connection.ExecuteAsync(
+                sql,
+                new { ID = user.Id, Name = user.Name, Email = user.Email, PasswordHash = user.PasswordHash, Phone = user.Phone, Currency = user.Currency, Language = user.Language, Avatar = user.Avatar},
+                _transaction
+            );
+        }
+    }
+}
