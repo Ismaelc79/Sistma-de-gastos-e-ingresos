@@ -4,8 +4,8 @@ namespace Domain.Interfaces
 {
     public interface IRefreshTokenRepository
     {
-        Task<RefreshToken?> GetByIdAsync(string id);
-        Task<IEnumerable<RefreshToken>> GetByUserIdAsync(string userId);
+        Task<RefreshToken?> GetByIdAsync(Ulid id);
+        Task<IEnumerable<RefreshToken>> GetByUserIdAsync(Ulid userId);
         Task AddAsync(RefreshToken token);
         Task RevokeAsync(RefreshToken token);
     }

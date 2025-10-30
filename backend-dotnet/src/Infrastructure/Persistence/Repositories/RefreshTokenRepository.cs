@@ -30,12 +30,12 @@ namespace Infrastructure.Persistence.Repositories
 
             await _connection.ExecuteAsync(
                 sql, 
-                new { ID = token.Id, UserId = token.UserId, JwtId = token.JwtId, ExpiresAt = token.ExpiresAt, Revoked = token.Revoked }, 
+                new { ID = token.Id.ToString(), UserId = token.UserId.ToString(), JwtId = token.JwtId, ExpiresAt = token.ExpiresAt, Revoked = token.Revoked }, 
                 _transaction
             );
         }
 
-        public async Task<RefreshToken?> GetByIdAsync(string id)
+        public async Task<RefreshToken?> GetByIdAsync(Ulid id)
         {
             const string sql = @"
                 SELECT * FROM dbo.RefreshToken 
@@ -44,12 +44,12 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QueryFirstOrDefaultAsync<RefreshToken>(
                 sql, 
-                new { ID = id },
+                new { ID = id.ToString() },
                 _transaction
             );
         }
 
-        public async Task<IEnumerable<RefreshToken>> GetByUserIdAsync(string userId)
+        public async Task<IEnumerable<RefreshToken>> GetByUserIdAsync(Ulid userId)
         {
             const string sql = @"
                 SELECT * FROM dbo.RefreshToken
@@ -58,7 +58,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QueryAsync<RefreshToken>(
                 sql,
-                new { UserId = userId },
+                new { UserId = userId.ToString() },
                 _transaction
            );
         }
@@ -73,7 +73,7 @@ namespace Infrastructure.Persistence.Repositories
 
             await _connection.ExecuteAsync(
                 sql,
-                new { ID = token.Id },
+                new { ID = token.Id.ToString() },
                 _transaction
             );
         }

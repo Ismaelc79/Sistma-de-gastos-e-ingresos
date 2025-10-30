@@ -30,12 +30,12 @@ namespace Infrastructure.Persistence.Repositories
 
             await _connection.ExecuteAsync(
                 sql,
-                new { ID = verification.Id, UserId = verification.UserId, Code = verification.Code, ExpiresAt = verification.ExpiresAt, Used = verification.Used },
+                new { ID = verification.Id.ToString(), UserId = verification.UserId.ToString(), Code = verification.Code, ExpiresAt = verification.ExpiresAt, Used = verification.Used },
                 _transaction
             );
         }
 
-        public async Task<UserVerification?> GetByIdAsync(string id)
+        public async Task<UserVerification?> GetByIdAsync(Ulid id)
         {
             const string sql = @"
                 SELECT * FROM dbo.UserVerification
@@ -44,12 +44,12 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QueryFirstOrDefaultAsync<UserVerification>(
                 sql,
-                new { ID = id },
+                new { ID = id.ToString() },
                 _transaction
             );
         }
 
-        public async Task<UserVerification?> GetByUserIdAsync(string userId)
+        public async Task<UserVerification?> GetByUserIdAsync(Ulid userId)
         {
             const string sql = @"
                 SELECT * FROM dbo.UserVerification
@@ -58,7 +58,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QueryFirstOrDefaultAsync<UserVerification>(
                 sql,
-                new { UserId = userId },
+                new { UserId = userId.ToString() },
                 _transaction
             );
         }
@@ -73,7 +73,7 @@ namespace Infrastructure.Persistence.Repositories
 
             await _connection.ExecuteAsync(
                 sql,
-                new { ID = verification.Id },
+                new { ID = verification.Id.ToString() },
                 _transaction
             );
         }

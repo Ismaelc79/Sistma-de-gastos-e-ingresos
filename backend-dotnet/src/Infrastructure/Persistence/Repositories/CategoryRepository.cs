@@ -31,7 +31,7 @@ namespace Infrastructure.Persistence.Repositories
 
             await _connection.ExecuteAsync(
                 sql,
-                new { UserId = category.UserId, Name = category.Name, Type = category.Type}, 
+                new { UserId = category.UserId.ToString(), Name = category.Name, Type = category.Type}, 
                 _transaction
             );
         }
@@ -64,7 +64,7 @@ namespace Infrastructure.Persistence.Repositories
             );
         }
 
-        public Task<IEnumerable<Category>> GetByUserIdAsync(string userId)
+        public Task<IEnumerable<Category>> GetByUserIdAsync(Ulid userId)
         {
             const string sql = @"
                 SELECT * FROM dbo.Category
@@ -73,7 +73,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return _connection.QueryAsync<Category>(
                 sql,
-                new { UserId = userId },
+                new { UserId = userId.ToString() },
                 _transaction
             );
         }

@@ -30,7 +30,7 @@ namespace Infrastructure.Persistence.Repositories
 
             await _connection.ExecuteAsync(
                 sql,
-                new { ID = user.Id, Name = user.Name, Email = user.Email, PasswordHas = user.PasswordHash, Phone = user.Phone, Currency = user.Currency, Language = user.Language, Avatar = user.Avatar },
+                new { ID = user.Id.ToString(), Name = user.Name, Email = user.Email, PasswordHas = user.PasswordHash, Phone = user.Phone, Currency = user.Currency, Language = user.Language, Avatar = user.Avatar },
                 _transaction
             );
         }
@@ -49,7 +49,7 @@ namespace Infrastructure.Persistence.Repositories
             );
         }
 
-        public async Task<User?> GetByIdAsync(string id)
+        public async Task<User?> GetByIdAsync(Ulid id)
         {
             const string sql = @"
                 SELECT * FROM dbo.User
@@ -58,7 +58,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QueryFirstOrDefaultAsync<User>(
                 sql,
-                new { ID = id },
+                new { ID = id.ToString() },
                 _transaction
             );
         }
@@ -73,7 +73,7 @@ namespace Infrastructure.Persistence.Repositories
 
             await _connection.ExecuteAsync(
                 sql,
-                new { ID = user.Id, Name = user.Name, Email = user.Email, PasswordHash = user.PasswordHash, Phone = user.Phone, Currency = user.Currency, Language = user.Language, Avatar = user.Avatar},
+                new { ID = user.Id.ToString(), Name = user.Name, Email = user.Email, PasswordHash = user.PasswordHash, Phone = user.Phone, Currency = user.Currency, Language = user.Language, Avatar = user.Avatar},
                 _transaction
             );
         }

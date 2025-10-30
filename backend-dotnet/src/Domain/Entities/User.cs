@@ -2,7 +2,7 @@ namespace Domain.Entities
 {
     public class User
     {
-        public string Id { get; private set; }
+        public Ulid Id { get; private set; }
         public string Name { get; private set; }
         public Email Email { get; private set; }
         public Password PasswordHash { get; private set; }
