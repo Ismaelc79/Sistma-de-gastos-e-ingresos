@@ -1,3 +1,5 @@
+using Domain.ValueObjects;
+
 namespace Domain.Entities
 {
     public class User
@@ -52,27 +54,5 @@ namespace Domain.Entities
         }
 
         public void Verify() => IsVerified = true;
-    }
-
-    public class Currency
-    {
-        private string v;
-
-        public Currency(string v)
-        {
-            this.v = v;
-        }
-    }
-
-    public class PhoneNumber
-    {
-    }
-
-    public class Password
-    {
-    }
-
-    public class Email
-    {
     }
 }
