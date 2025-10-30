@@ -88,7 +88,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return _connection.ExecuteAsync(
                 sql,
-                new { Name = category.Name, Type = category.Type },
+                new { ID = category.Id, Name = category.Name, Type = category.Type },
                 _transaction
             );
         }
