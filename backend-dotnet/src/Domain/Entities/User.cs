@@ -20,7 +20,7 @@ namespace Domain.Entities
         public List<UserVerification> Verifications { get; private set; } = new();
         public List<RefreshToken> RefreshTokens { get; private set; } = new();
 
-        public User(string id, string name, Email email, Password password,
+        public User(Ulid id, string name, Email email, Password password,
                     PhoneNumber? phone = null, Currency? currency = null,
                     string language = "English", string? avatar = null)
         {
