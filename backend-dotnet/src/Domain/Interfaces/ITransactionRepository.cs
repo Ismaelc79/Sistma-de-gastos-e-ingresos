@@ -1,6 +1,6 @@
-using SistemaGastos.Domain.Entities;
+using Domain.Entities;
 
-namespace SistemaGastos.Domain.Interfaces
+namespace Domain.Interfaces
 {
     public interface ITransactionRepository
     {
