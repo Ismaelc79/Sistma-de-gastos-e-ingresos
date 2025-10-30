@@ -1,11 +1,11 @@
-using SistemaGastos.Domain.Entities;
+using Domain.Entities;
 
-namespace SistemaGastos.Domain.Interfaces
+namespace Domain.Interfaces
 {
     public interface IRefreshTokenRepository
     {
-        Task<RefreshToken?> GetByIdAsync(string id);
-        Task<IEnumerable<RefreshToken>> GetByUserIdAsync(string userId);
+        Task<RefreshToken?> GetByIdAsync(Ulid id);
+        Task<IEnumerable<RefreshToken>> GetByUserIdAsync(Ulid userId);
         Task AddAsync(RefreshToken token);
         Task RevokeAsync(RefreshToken token);
     }
