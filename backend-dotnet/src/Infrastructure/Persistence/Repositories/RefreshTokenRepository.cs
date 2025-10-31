@@ -49,6 +49,20 @@ namespace Infrastructure.Persistence.Repositories
             );
         }
 
+        public async Task<RefreshToken?> GetByJwtIdAsync(string jwtId)
+        {
+            const string sql = @"
+                SELECT * FROM dbo.RefreshToken
+                WHERE JwtId = @JwtId
+            ";
+
+            return await _connection.QueryFirstOrDefaultAsync<RefreshToken>(
+                sql,
+                new { JwtId = jwtId },
+                _transaction
+            );
+        }
+
         public async Task<IEnumerable<RefreshToken>> GetByUserIdAsync(Ulid userId)
         {
             const string sql = @"
@@ -63,7 +77,7 @@ namespace Infrastructure.Persistence.Repositories
            );
         }
 
-        public async Task RevokeAsync(RefreshToken token)
+        public async Task RevokeTokenAsync(Ulid id)
         {
             const string sql = @"
                 UPDATE dbo.RefreshToken
@@ -73,7 +87,7 @@ namespace Infrastructure.Persistence.Repositories
 
             await _connection.ExecuteAsync(
                 sql,
-                new { ID = token.Id.ToString() },
+                new { ID = id.ToString() },
                 _transaction
             );
         }

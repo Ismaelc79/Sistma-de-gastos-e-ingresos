@@ -53,6 +53,10 @@ namespace Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void Verify() => IsVerified = true;
+        public void Verify()
+        {
+            IsVerified = true;
+            UpdatedAt = DateTime.Now;
+        }
     }
 }
