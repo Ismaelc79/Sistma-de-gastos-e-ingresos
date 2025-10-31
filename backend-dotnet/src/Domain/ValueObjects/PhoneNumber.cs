@@ -33,4 +33,3 @@ namespace Domain.ValueObjects
         public override int GetHashCode() => Value.GetHashCode();
     }
 }
-}
