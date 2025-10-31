@@ -63,7 +63,21 @@ namespace Infrastructure.Persistence.Repositories
             );
         }
 
-        public async Task MarkUsedAsync(UserVerification verification)
+        public async Task<UserVerification?> GetByUserIdAndCodeAsync(Ulid userId, string code)
+        {
+            const string sql = @"
+                SELECT * FROM dbo.UserVerification
+                WHERE UserId = @UserId AND Code = @Code
+            ";
+
+            return await _connection.QueryFirstOrDefaultAsync<UserVerification>(
+                sql,
+                new { UserId = userId.ToString(), Code = code },
+                _transaction
+            );
+        }
+
+        public async Task MarkAsUsedAsync(Ulid id)
         {
             const string sql = @"
                 UPDATE dbo.UserVerification
@@ -73,7 +87,7 @@ namespace Infrastructure.Persistence.Repositories
 
             await _connection.ExecuteAsync(
                 sql,
-                new { ID = verification.Id.ToString() },
+                new { ID = id.ToString() },
                 _transaction
             );
         }

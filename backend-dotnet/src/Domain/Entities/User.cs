@@ -1,3 +1,5 @@
+using Domain.ValueObjects;
+
 namespace Domain.Entities
 {
     public class User
@@ -51,28 +53,10 @@ namespace Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void Verify() => IsVerified = true;
-    }
-
-    public class Currency
-    {
-        private string v;
-
-        public Currency(string v)
+        public void Verify()
         {
-            this.v = v;
+            IsVerified = true;
+            UpdatedAt = DateTime.Now;
         }
-    }
-
-    public class PhoneNumber
-    {
-    }
-
-    public class Password
-    {
-    }
-
-    public class Email
-    {
     }
 }

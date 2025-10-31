@@ -49,11 +49,30 @@ namespace Infrastructure.Persistence.Repositories
             );
         }
 
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            const string sql = @"
+                SELECT CASE WHEN EXISTS(
+                    SELECT 1 FROM dbo.User
+                    WHERE Email = @Email
+                )
+                THEN 1 ELSE 0 END
+            ";
+
+            var result = await _connection.ExecuteScalarAsync<int>(
+                sql,
+                new { Email = email },
+                _transaction
+            );
+
+            return result.Equals(1);
+        }
+
         public async Task<User?> GetByIdAsync(Ulid id)
         {
             const string sql = @"
                 SELECT * FROM dbo.User
-                WHERE ID = ID
+                WHERE ID = @ID
             ";
 
             return await _connection.QueryFirstOrDefaultAsync<User>(
@@ -68,7 +87,7 @@ namespace Infrastructure.Persistence.Repositories
             const string sql = @"
                 UPDATE FROM dbo.User
                 SET Name = @Name, Email = @Email, PasswordHash = @PasswordHash, Phone = @Phone, Currency = @Currency, Language = @Language, Avatar = @Avatar
-                WHERE ID = ID
+                WHERE ID = @ID
             ";
 
             await _connection.ExecuteAsync(
