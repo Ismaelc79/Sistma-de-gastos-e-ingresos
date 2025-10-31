@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { Card } from '../../../shared/ui';
 import { getTransactions } from '../../transactions/api/transactions.api';
 import type { Transaction } from '../../../shared/types/transaction.types';
@@ -26,14 +26,12 @@ function toMonthKey(d: string) {
 
 export const ReportsPage = () => {
   const [data, setData] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(false);
+  // Removed unused loading state to satisfy noUnusedLocals
 
   useEffect(() => {
     (async () => {
-      setLoading(true);
       const tx = await getTransactions();
       setData(tx);
-      setLoading(false);
     })();
   }, []);
 

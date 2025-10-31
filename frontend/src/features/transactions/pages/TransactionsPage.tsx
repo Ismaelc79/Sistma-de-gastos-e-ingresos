@@ -6,7 +6,7 @@ import type { Transaction, TransactionCategory, TransactionInput, TransactionTyp
 export const TransactionsPage = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [categories, setCategories] = useState<TransactionCategory[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [form, setForm] = useState<TransactionInput>({
     type: 'expense',
     amount: 0,
