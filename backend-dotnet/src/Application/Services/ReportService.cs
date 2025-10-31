@@ -16,95 +16,58 @@ public class ReportService : IReportService
         _mapper = mapper;
     }
 
-    public async Task<SummaryReportDto> GetSummaryReportAsync(Ulid userId, DateTime startDate, DateTime endDate)
+    public async Task<SummaryReportDto> GetCategorySummaryAsync(Ulid userId, string categoryType, DateTime startDate, DateTime endDate)
     {
+        // Tra las categorias filtradas por tipo
+        var categories = await _unitOfWork.Category.GetByUserIdAndTypeAsync(userId, categoryType);
+
+        // Trae las transacciones filtradas por fecha
         var transactions = await _unitOfWork.Transaction.GetByUserIdAndDateRangeAsync(userId, startDate, endDate);
 
-        var report = new SummaryReportDto
+        // Filtra por categorias
+
+        var filteredTransactions = transactions.Where(x => transactions.Any(a => a.Id.Equals(x.CategoryId))).ToList();
+
+        // Agrupa por categoria
+        var grouped = filteredTransactions
+            .GroupBy(t => t.CategoryId)
+            .Select(g =>
+            {
+                var category = categories.FirstOrDefault(c => c.Id == g.Key);
+                var totalAmount = g.Sum(t => t.Amount);
+                return new
+                {
+                    CategoryName = category?.Name ?? "Sin categoría",
+                    TotalAmount = totalAmount,
+                    CategoryType = category?.Type
+                };
+            })
+            .ToList();
+
+        var total = grouped.Sum(x => x.TotalAmount);
+
+        // Calcular % recomendado
+        decimal GetRecommendedPercent(string? type) => type switch
         {
-            
+            "Gasto" or "Expense" => 30m,
+            "Ingreso" or "Income" => 0m,
+            _ => 0m
         };
 
-        // Agrupar por categoría
-        var groupedByCategory = transactions.GroupBy(t => t.CategoryId);
-
-        foreach (var group in groupedByCategory)
+        var summary = grouped.Select(x => new CategorySummary
         {
-            var category = await _unitOfWork.Category.GetByIdAsync(group.Key);
+            Name = x.CategoryName,
+            TotalAmount = x.TotalAmount,
+            Percentage = total > 0 ? Math.Round((x.TotalAmount / total) * 100, 2) : 0,
+            PercentageRecommended = GetRecommendedPercent(x.CategoryType)
+        }).ToList();
 
-            if (category != null)
-            {
-                var categorySummary = new CategorySummary
-                {
-                    CategoryId = category.Id,
-                    CategoryName = category.Name,
-                    CategoryType = category.Type,
-                    TransactionCount = group.Count()
-                };
-
-                report.CategoryBreakdown.Add(categorySummary);
-
-                // Contar por tipo
-                if (category.Type.Equals("Income", StringComparison.OrdinalIgnoreCase))
-                {
-                    report.IncomeCount += group.Count();
-                }
-                else if (category.Type.Equals("Expense", StringComparison.OrdinalIgnoreCase))
-                {
-                    report.ExpenseCount += group.Count();
-                }
-            }
-        }
-
-        return report;
-    }
-
-    public async Task<SummaryReportDto> GetSummaryReportByTypeAsync(string userId, string categoryType, DateTime startDate, DateTime endDate)
-    {
-        var transactions = await _unitOfWork.Transactions.GetByUserIdAndDateRangeAsync(userId, startDate, endDate);
-
-        // Filtrar por tipo de categoría
-        var filteredTransactions = new List<Domain.Entities.Transaction>();
-        foreach (var transaction in transactions)
+        return new SummaryReportDto
         {
-            var category = await _unitOfWork.Categories.GetByIdAsync(transaction.CategoryId);
-            if (category != null && category.Type.Equals(categoryType, StringComparison.OrdinalIgnoreCase))
-            {
-                filteredTransactions.Add(transaction);
-            }
-        }
-
-        var report = new SummaryReportDto
-        {
-            UserId = userId,
-            StartDate = startDate,
-            EndDate = endDate,
-            TotalTransactions = filteredTransactions.Count(),
-            IncomeCount = categoryType.Equals("Income", StringComparison.OrdinalIgnoreCase) ? filteredTransactions.Count() : 0,
-            ExpenseCount = categoryType.Equals("Expense", StringComparison.OrdinalIgnoreCase) ? filteredTransactions.Count() : 0,
-            CategoryBreakdown = new List<CategorySummary>()
+            CategoryType = categoryType,
+            TotalPercentage = summary.Sum(x=>x.Percentage),
+            TotalPercentageRecommended = summary.Sum(x=>x.PercentageRecommended),
+            TotalAmount = summary.Sum(x=>x.TotalAmount)
         };
-
-        // Agrupar por categoría
-        var groupedByCategory = filteredTransactions.GroupBy(t => t.CategoryId);
-
-        foreach (var group in groupedByCategory)
-        {
-            var category = await _unitOfWork.Categories.GetByIdAsync(group.Key);
-            if (category != null)
-            {
-                var categorySummary = new CategorySummary
-                {
-                    CategoryId = category.Id,
-                    CategoryName = category.Name,
-                    CategoryType = category.Type,
-                    TransactionCount = group.Count()
-                };
-
-                report.CategoryBreakdown.Add(categorySummary);
-            }
-        }
-
-        return report;
     }
 }

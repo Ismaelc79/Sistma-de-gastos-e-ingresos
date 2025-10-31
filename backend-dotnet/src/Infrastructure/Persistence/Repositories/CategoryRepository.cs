@@ -67,14 +67,14 @@ namespace Infrastructure.Persistence.Repositories
             );
         }
 
-        public Task<IEnumerable<Category>> GetByUserIdAsync(Ulid userId)
+        public async Task<IEnumerable<Category>> GetByUserIdAsync(Ulid userId)
         {
             const string sql = @"
                 SELECT * FROM dbo.Category
                 WHERE UserId = @UserId
             ";
 
-            return _connection.QueryAsync<Category>(
+            return await _connection.QueryAsync<Category>(
                 sql,
                 new { UserId = userId.ToString() },
                 _transaction
@@ -93,6 +93,20 @@ namespace Infrastructure.Persistence.Repositories
             return await _connection.QuerySingleAsync<Category>(
                 sql,
                 new { ID = category.Id, Name = category.Name, Type = category.Type },
+                _transaction
+            );
+        }
+
+        public async Task<IEnumerable<Category>> GetByUserIdAndTypeAsync(Ulid userId, string type)
+        {
+            const string sql = @"
+                SELECT * FROM dbo.Category
+                WHERE UserId = @UserId AND Type = @Type
+            ";
+
+            return await _connection.QueryAsync<Category>(
+                sql,
+                new { UserId = userId.ToString(), Type = type },
                 _transaction
             );
         }
