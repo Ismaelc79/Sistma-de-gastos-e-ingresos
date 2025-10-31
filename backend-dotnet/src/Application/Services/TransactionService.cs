@@ -2,6 +2,7 @@ using Application.DTOs.Transactions;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Interfaces;
 
 namespace Application.Services;
 
@@ -19,9 +20,8 @@ public class TransactionService : ITransactionService
     public async Task<TransactionDto> CreateTransactionAsync(CreateTransactionRequest request)
     {
         var transaction = _mapper.Map<Transaction>(request);
-        transaction.CreatedAt = DateTime.UtcNow;
 
-        var createdTransaction = await _unitOfWork.Transactions.AddAsync(transaction);
+        var createdTransaction = await _unitOfWork.Transaction.AddAsync(transaction);
         await _unitOfWork.SaveChangesAsync();
 
         return _mapper.Map<TransactionDto>(createdTransaction);
@@ -29,41 +29,39 @@ public class TransactionService : ITransactionService
 
     public async Task<TransactionDto?> GetTransactionByIdAsync(int id)
     {
-        var transaction = await _unitOfWork.Transactions.GetByIdAsync(id);
+        var transaction = await _unitOfWork.Transaction.GetByIdAsync(id);
         return transaction != null ? _mapper.Map<TransactionDto>(transaction) : null;
     }
 
-    public async Task<IEnumerable<TransactionDto>> GetTransactionsByUserIdAsync(string userId)
+    public async Task<IEnumerable<TransactionDto>> GetTransactionsByUserIdAsync(Ulid userId)
     {
-        var transactions = await _unitOfWork.Transactions.GetByUserIdAsync(userId);
+        var transactions = await _unitOfWork.Transaction.GetByUserIdAsync(userId);
         return _mapper.Map<IEnumerable<TransactionDto>>(transactions);
     }
 
-    public async Task<IEnumerable<TransactionDto>> GetTransactionsByUserIdAndDateRangeAsync(string userId, DateTime startDate, DateTime endDate)
+    public async Task<IEnumerable<TransactionDto>> GetTransactionsByUserIdAndDateRangeAsync(Ulid userId, DateTime startDate, DateTime endDate)
     {
-        var transactions = await _unitOfWork.Transactions.GetByUserIdAndDateRangeAsync(userId, startDate, endDate);
+        var transactions = await _unitOfWork.Transaction.GetByUserIdAndDateRangeAsync(userId, startDate, endDate);
         return _mapper.Map<IEnumerable<TransactionDto>>(transactions);
     }
 
     public async Task<IEnumerable<TransactionDto>> GetTransactionsByCategoryIdAsync(int categoryId)
     {
-        var transactions = await _unitOfWork.Transactions.GetByCategoryIdAsync(categoryId);
+        var transactions = await _unitOfWork.Transaction.GetByCategoryIdAsync(categoryId);
         return _mapper.Map<IEnumerable<TransactionDto>>(transactions);
     }
 
     public async Task<TransactionDto> UpdateTransactionAsync(int id, CreateTransactionRequest request)
     {
-        var transaction = await _unitOfWork.Transactions.GetByIdAsync(id);
+        var transaction = await _unitOfWork.Transaction.GetByIdAsync(id);
         if (transaction == null)
         {
             throw new KeyNotFoundException($"Transacción con ID {id} no encontrada");
         }
 
-        transaction.CategoryId = request.CategoryId;
-        transaction.Name = request.Name;
-        transaction.Description = request.Description;
+        transaction.Update( categoryId: request.CategoryId, name: request.Name, description: request.Description, amount: request.Amount );
 
-        var updatedTransaction = await _unitOfWork.Transactions.UpdateAsync(transaction);
+        var updatedTransaction = await _unitOfWork.Transaction.UpdateAsync(transaction);
         await _unitOfWork.SaveChangesAsync();
 
         return _mapper.Map<TransactionDto>(updatedTransaction);
@@ -71,6 +69,6 @@ public class TransactionService : ITransactionService
 
     public async Task<bool> DeleteTransactionAsync(int id)
     {
-        return await _unitOfWork.Transactions.DeleteAsync(id);
+        return await _unitOfWork.Transaction.DeleteAsync(id);
     }
 }
