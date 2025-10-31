@@ -21,14 +21,15 @@ namespace Infrastructure.Persistence.Repositories
             _transaction = transaction;
         }
 
-        public async Task AddAsync(User user)
+        public async Task<User> AddAsync(User user)
         {
             const string sql = @"
-                INSERT INTO dbo.User (ID, Name, Email, PasswordHash, Phone, Currency, Language, Avatar) 
+                INSERT INTO dbo.User (ID, Name, Email, PasswordHash, Phone, Currency, Language, Avatar)
+                OUTPUT INSERTED.*
                 VALUES (@ID, @Name, @Email, @PasswordHash, @Phone, @Currency, @Language, @Avatar)
             ";
 
-            await _connection.ExecuteAsync(
+            return await _connection.QuerySingleAsync<User>(
                 sql,
                 new { ID = user.Id.ToString(), Name = user.Name, Email = user.Email, PasswordHas = user.PasswordHash, Phone = user.Phone, Currency = user.Currency, Language = user.Language, Avatar = user.Avatar },
                 _transaction
@@ -82,15 +83,16 @@ namespace Infrastructure.Persistence.Repositories
             );
         }
 
-        public async Task UpdateAsync(User user)
+        public async Task<User> UpdateAsync(User user)
         {
             const string sql = @"
                 UPDATE FROM dbo.User
                 SET Name = @Name, Email = @Email, PasswordHash = @PasswordHash, Phone = @Phone, Currency = @Currency, Language = @Language, Avatar = @Avatar
+                OUTPUT INSERTED.*
                 WHERE ID = @ID
             ";
 
-            await _connection.ExecuteAsync(
+            return await _connection.QuerySingleAsync<User>(
                 sql,
                 new { ID = user.Id.ToString(), Name = user.Name, Email = user.Email, PasswordHash = user.PasswordHash, Phone = user.Phone, Currency = user.Currency, Language = user.Language, Avatar = user.Avatar},
                 _transaction

@@ -27,7 +27,6 @@ namespace Domain.ValueObjects
 
         public override string ToString() => Value;
 
-        // Igualdad estructural (para que Dapper, EF o HashSet lo manejen correctamente)
         public override bool Equals(object? obj)
             => obj is PhoneNumber other && Value == other.Value;
 

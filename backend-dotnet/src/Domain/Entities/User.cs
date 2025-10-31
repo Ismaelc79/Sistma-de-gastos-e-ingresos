@@ -58,5 +58,13 @@ namespace Domain.Entities
             IsVerified = true;
             UpdatedAt = DateTime.Now;
         }
+
+        public void ChangePassword(Password password)
+        {
+            if (password is null) throw new ArgumentNullException(nameof(password));
+
+            PasswordHash = password;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }
