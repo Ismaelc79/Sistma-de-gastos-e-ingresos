@@ -12,12 +12,17 @@ namespace Domain.Entities
         public Category(string name, string type, Ulid userId)
         {
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Nombre obligatorio");
-       //     if (type != "Ingreso" && type != "Gastos") throw new ArgumentException("Tipo inválido");
 
             Name = name;
             Type = type;
             UserId = userId;
             CreatedAt = DateTime.UtcNow;
+        }
+
+        public void EditCategory(string name, string type)
+        {
+            if (string.IsNullOrWhiteSpace(name)) Name = name;
+            if (string.IsNullOrWhiteSpace(type)) Type = type;
         }
     }
 }

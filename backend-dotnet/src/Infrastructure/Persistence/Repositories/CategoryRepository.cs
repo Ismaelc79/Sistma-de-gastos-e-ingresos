@@ -22,32 +22,35 @@ namespace Infrastructure.Persistence.Repositories
             _transaction = transaction;
         }
 
-        public async Task AddAsync(Category category)
+        public async Task<Category> AddAsync(Category category)
         {
             const string sql = @"
                 INSERT INTO dbo.Category (UserId, Name, Type) 
+                OUTPUT INSERTED.*
                 VALUES (@UserId, @Name, @Type)
             ";
 
-            await _connection.ExecuteAsync(
+            return await _connection.QuerySingleAsync<Category>(
                 sql,
                 new { UserId = category.UserId.ToString(), Name = category.Name, Type = category.Type}, 
                 _transaction
             );
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             const string sql = @"
                 DELETE FROM dbo.Category 
                 WHERE Id = @Id
             ";
 
-            await _connection.ExecuteAsync(
+            var rows = await _connection.ExecuteAsync(
                 sql, 
                 new { Id = id }, 
                 _transaction
             );
+
+            return rows > 0;
         }
 
         public async Task<Category?> GetByIdAsync(int id)
@@ -78,15 +81,16 @@ namespace Infrastructure.Persistence.Repositories
             );
         }
 
-        public Task UpdateAsync(Category category)
+        public async Task<Category> UpdateAsync(Category category)
         {
             const string sql = @"
                 UPDATE dbo.Category
                 SET Name = @Name, Type = @Type
+                OUTPUT INSERTED.*
                 WHERE ID = @ID
             ";
 
-            return _connection.ExecuteAsync(
+            return await _connection.QuerySingleAsync<Category>(
                 sql,
                 new { ID = category.Id, Name = category.Name, Type = category.Type },
                 _transaction
