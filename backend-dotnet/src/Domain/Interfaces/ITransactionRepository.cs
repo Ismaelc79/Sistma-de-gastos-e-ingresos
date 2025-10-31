@@ -7,8 +7,9 @@ namespace Domain.Interfaces
         Task<Transaction?> GetByIdAsync(int id);
         Task<IEnumerable<Transaction>> GetByUserIdAsync(Ulid userId);
         Task<IEnumerable<Transaction>> GetByCategoryIdAsync(int categoryId);
-        Task AddAsync(Transaction transaction);
-        Task UpdateAsync(Transaction transaction);
-        Task DeleteAsync(int id);
+        Task<IEnumerable<Transaction>> GetByUserIdAndDateRangeAsync(Ulid userId, DateTime startDate, DateTime endDate);
+        Task<Transaction> AddAsync(Transaction transaction);
+        Task<Transaction> UpdateAsync(Transaction transaction);
+        Task<bool> DeleteAsync(int id);
     }
 }

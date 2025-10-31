@@ -1,6 +1,7 @@
 using Application.DTOs.Reports;
 using Application.Interfaces;
 using AutoMapper;
+using Domain.Interfaces;
 
 namespace Application.Services;
 
@@ -15,19 +16,13 @@ public class ReportService : IReportService
         _mapper = mapper;
     }
 
-    public async Task<SummaryReportDto> GetSummaryReportAsync(string userId, DateTime startDate, DateTime endDate)
+    public async Task<SummaryReportDto> GetSummaryReportAsync(Ulid userId, DateTime startDate, DateTime endDate)
     {
-        var transactions = await _unitOfWork.Transactions.GetByUserIdAndDateRangeAsync(userId, startDate, endDate);
+        var transactions = await _unitOfWork.Transaction.GetByUserIdAndDateRangeAsync(userId, startDate, endDate);
 
         var report = new SummaryReportDto
         {
-            UserId = userId,
-            StartDate = startDate,
-            EndDate = endDate,
-            TotalTransactions = transactions.Count(),
-            IncomeCount = 0,
-            ExpenseCount = 0,
-            CategoryBreakdown = new List<CategorySummary>()
+            
         };
 
         // Agrupar por categoría
@@ -35,7 +30,8 @@ public class ReportService : IReportService
 
         foreach (var group in groupedByCategory)
         {
-            var category = await _unitOfWork.Categories.GetByIdAsync(group.Key);
+            var category = await _unitOfWork.Category.GetByIdAsync(group.Key);
+
             if (category != null)
             {
                 var categorySummary = new CategorySummary
