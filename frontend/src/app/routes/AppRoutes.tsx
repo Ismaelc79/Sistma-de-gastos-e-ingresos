@@ -3,6 +3,8 @@ import { LoginPage } from '../../features/auth/pages/LoginPage';
 import { RegisterPage } from '../../features/auth/pages/RegisterPage';
 import { DashboardPage } from '../../features/dashboard/pages/DashboardPage';
 import { TransactionsPage } from '../../features/transactions/pages/TransactionsPage';
+import { ReportsPage } from '../../features/reports/pages/ReportsPage';
+import { ProfilePage } from '../../features/profile/pages/ProfilePage';
 
 import { MainLayout } from '../../shared/layouts/MainLayout';
 import { ProtectedRoute } from './ProtectedRoute';
@@ -32,10 +34,6 @@ export const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <MainLayout>
-                <div className="text-center py-12">
-                  <h1 className="text-2xl font-bold text-dark-900">Falta dinero para completar esto</h1>
-                  <p className="text-dark-600 mt-2">Coming soon...</p>
-                </div>
                 <TransactionsPage />
               </MainLayout>
             </ProtectedRoute>
@@ -47,10 +45,7 @@ export const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <MainLayout>
-                <div className="text-center py-12">
-                  <h1 className="text-2xl font-bold text-dark-900">Reports</h1>
-                  <p className="text-dark-600 mt-2">Coming soon...</p>
-                </div>
+                <ReportsPage />
               </MainLayout>
             </ProtectedRoute>
           }
@@ -61,10 +56,7 @@ export const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <MainLayout>
-                <div className="text-center py-12">
-                  <h1 className="text-2xl font-bold text-dark-900">Profile</h1>
-                  <p className="text-dark-600 mt-2">Coming soon...</p>
-                </div>
+                <ProfilePage />
               </MainLayout>
             </ProtectedRoute>
           }
