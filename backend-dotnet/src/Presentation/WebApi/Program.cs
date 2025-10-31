@@ -1,3 +1,5 @@
+using Application.Interfaces;
+using Application.Services;
 using Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,9 @@ builder.Services.AddSwaggerGen();
 
 // Pass Configuration to Infrastructure
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Design patten scoped
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 

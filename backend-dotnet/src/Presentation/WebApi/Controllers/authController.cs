@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.Auth;
-using Application.Services;
+using Application.Interfaces;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +10,7 @@ namespace WebApi.Controllers
     public class authController : ControllerBase
     {
 
-        readonly AuthService authService;
+        readonly IAuthService authService;
 
 
         [HttpPost("/register")]
