@@ -55,50 +55,53 @@ export const ReportsPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <h2 className="text-lg font-semibold text-dark-900 mb-4">Income vs Expense (Bar)</h2>
-          <Bar
-            data={{
-              labels: months,
-              datasets: [
-                { label: 'Income', data: byMonthIncome, backgroundColor: 'rgba(34,197,94,0.6)' },
-                { label: 'Expense', data: byMonthExpense, backgroundColor: 'rgba(239,68,68,0.6)' },
-              ],
-            }}
-            options={{ responsive: true, maintainAspectRatio: false }}
-            height={220}
-          />
+          <div className="h-72">
+            <Bar
+              data={{
+                labels: months,
+                datasets: [
+                  { label: 'Income', data: byMonthIncome, backgroundColor: 'rgba(34,197,94,0.6)' },
+                  { label: 'Expense', data: byMonthExpense, backgroundColor: 'rgba(239,68,68,0.6)' },
+                ],
+              }}
+              options={{ responsive: true, maintainAspectRatio: false }}
+            />
+          </div>
         </Card>
 
         <Card>
           <h2 className="text-lg font-semibold text-dark-900 mb-4">Spending by Category (Doughnut)</h2>
-          <Doughnut
-            data={{
-              labels: categories,
-              datasets: [
-                {
-                  label: 'Expenses',
-                  data: byCategory,
-                  backgroundColor: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'],
-                },
-              ],
-            }}
-            options={{ responsive: true, maintainAspectRatio: false }}
-            height={220}
-          />
+          <div className="h-72">
+            <Doughnut
+              data={{
+                labels: categories,
+                datasets: [
+                  {
+                    label: 'Expenses',
+                    data: byCategory,
+                    backgroundColor: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'],
+                  },
+                ],
+              }}
+              options={{ responsive: true, maintainAspectRatio: false }}
+            />
+          </div>
         </Card>
 
         <Card>
           <h2 className="text-lg font-semibold text-dark-900 mb-4">Trend (Line)</h2>
-          <Line
-            data={{
-              labels: months,
-              datasets: [
-                { label: 'Income', data: byMonthIncome, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.2)', fill: true },
-                { label: 'Expense', data: byMonthExpense, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.2)', fill: true },
-              ],
-            }}
-            options={{ responsive: true, maintainAspectRatio: false }}
-            height={260}
-          />
+          <div className="h-80">
+            <Line
+              data={{
+                labels: months,
+                datasets: [
+                  { label: 'Income', data: byMonthIncome, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.2)', fill: true },
+                  { label: 'Expense', data: byMonthExpense, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.2)', fill: true },
+                ],
+              }}
+              options={{ responsive: true, maintainAspectRatio: false }}
+            />
+          </div>
         </Card>
 
         <Card>
