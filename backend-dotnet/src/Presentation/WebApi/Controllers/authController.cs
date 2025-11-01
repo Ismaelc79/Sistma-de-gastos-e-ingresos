@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.Auth;
-using Application.Services;
+using Application.Interfaces;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,60 +9,53 @@ namespace WebApi.Controllers
     [Route("/api/[controller]")]
     public class authController : ControllerBase
     {
+        private readonly IAuthService authService;
 
-        readonly AuthService authService;
-
+        public authController(IAuthService authService)
+        {
+            this.authService = authService;
+        }
 
         [HttpPost("/register")]
-        public IActionResult Register(RegisterRequest registerRequest)
+        public async Task<IActionResult> Register(RegisterRequest registerRequest)
         {
-
             try
             {
-                Task<AuthResponse> response = authService.RegisterAsync(registerRequest);
+                AuthResponse response = await authService.RegisterAsync(registerRequest);
                 return Ok(response);
             }
             catch (Exception ex)
             {
 
-                return StatusCode(401, ex);
+                return StatusCode(401, new { message = ex.Message});
             }
-
         }
 
         [HttpPost("/login")]
-        public IActionResult login(LoginRequest loginRequest)
+        public async Task<IActionResult> login(LoginRequest loginRequest)
         {
-
             try
             {
-                Task<AuthResponse> authResponse = authService.LoginAsync(loginRequest);
+                AuthResponse authResponse = await authService.LoginAsync(loginRequest);
                 return Ok(authResponse);
             }
             catch (Exception ex) {
-                return StatusCode(401, ex);
+                return StatusCode(401, new { message = ex.Message});
             }
-        
-            
         }
 
         [HttpPost("/refresh")]
-        public IActionResult Refresh(RefreshTokenRequest refreshTokenRequest)
+        public async Task<IActionResult> Refresh(RefreshTokenRequest refreshTokenRequest)
         {
-
-
             try
             {
-
-                Task<AuthResponse> authResponse = authService.RefreshTokenAsync(refreshTokenRequest);
+                AuthResponse authResponse = await authService.RefreshTokenAsync(refreshTokenRequest);
                 return Ok(refreshTokenRequest);
-
             }
             catch (Exception ex)
             {
-                return StatusCode(401, ex);
+                return StatusCode(401, new { message = ex.Message });
             }
-            
         }
 
         [HttpPost("/phone/start")]

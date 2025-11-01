@@ -1,3 +1,5 @@
+using Application.Interfaces;
+using Application.Services;
 using Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);

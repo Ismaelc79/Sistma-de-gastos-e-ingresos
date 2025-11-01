@@ -18,6 +18,7 @@ namespace Infrastructure.Persistence.Repositories
         public UnitOfWork(DapperContext context)
         {
             _connection = context.CreateConnection();
+            _connection.Open();
             _transaction = _connection.BeginTransaction();
         }
 
