@@ -14,9 +14,6 @@ builder.Services.AddSwaggerGen();
 // Pass Configuration to Infrastructure
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// Design patten scoped
-builder.Services.AddScoped<IAuthService, AuthService>();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -11,6 +11,8 @@ using Infrastructure.Persistence.Repositories;
 using Application.Interfaces;
 using Application.Services;
 using Infrastructure.Services;
+using AutoMapper;
+using Application.Mappings;
 
 namespace Infrastructure.DependencyInjection
 {
@@ -25,6 +27,10 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // Register services
+            services.AddAutoMapper(x =>
+            {
+                x.AddProfile<MappingProfile>();
+            });
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenService, TokenService>();
 
