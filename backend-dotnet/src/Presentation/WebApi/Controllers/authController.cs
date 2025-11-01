@@ -10,16 +10,20 @@ namespace WebApi.Controllers
     public class authController : ControllerBase
     {
 
-        readonly IAuthService authService;
+        private readonly IAuthService authService;
 
+        public authController(IAuthService authService)
+        {
+            this.authService = authService;
+        }
 
         [HttpPost("/register")]
-        public IActionResult Register(RegisterRequest registerRequest)
+        public async Task<IActionResult> Register(RegisterRequest registerRequest)
         {
 
             try
             {
-                Task<AuthResponse> response = authService.RegisterAsync(registerRequest);
+                AuthResponse response = await authService.RegisterAsync(registerRequest);
                 return Ok(response);
             }
             catch (Exception ex)
