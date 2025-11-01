@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Application.DTOs.Auth;
+using Application.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
@@ -8,17 +10,25 @@ namespace WebApi.Controllers
     public class usersController : ControllerBase
     {
 
-        [HttpGet]
-        public IActionResult Get() {
 
-            return Ok("Lista Users");
+        private readonly IUserService userService;
+
+        public usersController(IUserService userService)
+        {
+            this.userService = userService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get(Ulid id) {
+
+            return Ok(await userService.GetUserByIdAsync(id));
         }
 
         [HttpPatch]
-        public IActionResult Patch() {
+        public async Task<IActionResult> Patch(Ulid id, UpdateProfileRequest upr) {
         
 
-            return NoContent();
+            return Ok(await userService.UpdateUserProfileAsync(id, upr));
         }
 
     }

@@ -24,7 +24,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task AddAsync(UserVerification verification)
         {
             const string sql = @"
-                INSERT INTO dbo.UserVerification (ID, UserId, Code, ExpiresAt, Used)
+                INSERT INTO [dbo].[UserVerification] (ID, UserId, Code, ExpiresAt, Used)
                 VALUES (@ID, @UserId, @Code, @ExpiresAt, @Used)
             ";
 

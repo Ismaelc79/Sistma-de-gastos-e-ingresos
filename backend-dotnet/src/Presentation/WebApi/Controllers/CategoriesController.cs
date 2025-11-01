@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Application.DTOs.Categories;
 using Application.DTOs.Transactions;
+using Application.Interfaces;
 using Application.Services;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http;
@@ -18,24 +19,30 @@ namespace WebApi.Controllers
 
     {
 
-        readonly CategoryService categoryService;
+        private readonly ICategoryService _categoryService;
+
+        public CategoriesController(ICategoryService categoryService)
+        {
+            _categoryService = categoryService;
+        }
 
 
         [HttpGet]
-        public IActionResult getCategories(){
+        public async Task<IActionResult> GetCategoriesByUserId(Ulid userID){
 
-            return Ok(categoryService.GetCategoriesByUserIdAsync);
-           
+            var categorias = await _categoryService.GetCategoriesByUserIdAsync(userID); 
+            return Ok(categorias);
+            
         }
 
         [HttpPost]
-        public IActionResult addCategorie(CreateCategoryRequest createCategory)
+        public IActionResult Add(CreateCategoryRequest createCategory)
         {
 
             try
             {
 
-              Task<CategoryDto> categoria = categoryService.CreateCategoryAsync(createCategory);
+              Task<CategoryDto> categoria = _categoryService.CreateCategoryAsync(createCategory);
                 return Created("", categoria);
             }
             catch (Exception ex) 

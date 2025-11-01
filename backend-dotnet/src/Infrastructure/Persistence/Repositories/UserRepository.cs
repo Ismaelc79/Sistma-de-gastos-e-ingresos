@@ -24,7 +24,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<User> AddAsync(User user)
         {
             const string sql = @"
-                INSERT INTO dbo.User (ID, Name, Email, PasswordHash, Phone, Currency, Language, Avatar)
+                INSERT INTO [dbo].[User] (ID, Name, Email, PasswordHash, Phone, Currency, Language, Avatar)
                 OUTPUT INSERTED.*
                 VALUES (@ID, @Name, @Email, @PasswordHash, @Phone, @Currency, @Language, @Avatar)
             ";
@@ -39,7 +39,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<User?> GetByEmailAsync(string email)
         {
             const string sql = @"
-                SELECT * FROM dbo.User
+                SELECT * FROM [dbo].[User]
                 WHERE Email = @Email
             ";
 
@@ -54,7 +54,7 @@ namespace Infrastructure.Persistence.Repositories
         {
             const string sql = @"
                 SELECT CASE WHEN EXISTS(
-                    SELECT 1 FROM dbo.User
+                    SELECT 1 FROM [dbo].[User]
                     WHERE Email = @Email
                 )
                 THEN 1 ELSE 0 END

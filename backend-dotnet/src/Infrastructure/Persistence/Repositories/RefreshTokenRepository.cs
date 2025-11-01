@@ -24,7 +24,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task AddAsync(RefreshToken token)
         {
             const string sql = @"
-                INSERT INTO dbo.RefreshToken (ID, UserId, JwtId, ExpiresAt, Revoked) 
+                INSERT INTO [dbo].[RefreshToken] (ID, UserId, JwtId, ExpiresAt, Revoked) 
                 VALUES (@ID, @UserId, @JwtId, @ExpiresAt, @Revoked)
             ";
 
