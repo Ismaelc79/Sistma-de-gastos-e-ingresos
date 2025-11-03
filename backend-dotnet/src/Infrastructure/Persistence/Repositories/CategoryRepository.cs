@@ -25,14 +25,14 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<Category> AddAsync(Category category)
         {
             const string sql = @"
-                INSERT INTO dbo.Category (UserId, Name, Type) 
+                INSERT INTO [dbo].[Category] (UserId, Name, Type) 
                 OUTPUT INSERTED.*
                 VALUES (@UserId, @Name, @Type)
             ";
 
             return await _connection.QuerySingleAsync<Category>(
                 sql,
-                new { UserId = category.UserId.ToString(), Name = category.Name, Type = category.Type}, 
+                new { UserId = category.UserId, Name = category.Name, Type = category.Type}, 
                 _transaction
             );
         }
@@ -40,7 +40,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<bool> DeleteAsync(int id)
         {
             const string sql = @"
-                DELETE FROM dbo.Category 
+                DELETE FROM [dbo].[Category]
                 WHERE Id = @Id
             ";
 
@@ -56,7 +56,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<Category?> GetByIdAsync(int id)
         {
             const string sql = @"
-                SELECT * FROM dbo.Category 
+                SELECT * FROM [dbo].[Category] 
                 WHERE ID = @Id
             ";
 
@@ -70,13 +70,13 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<Category>> GetByUserIdAsync(Ulid userId)
         {
             const string sql = @"
-                SELECT * FROM dbo.Category
+                SELECT * FROM [dbo].[Category]
                 WHERE UserId = @UserId
             ";
 
             return await _connection.QueryAsync<Category>(
                 sql,
-                new { UserId = userId.ToString() },
+                new { UserId = userId },
                 _transaction
             );
         }
@@ -84,7 +84,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<Category> UpdateAsync(Category category)
         {
             const string sql = @"
-                UPDATE dbo.Category
+                UPDATE [dbo].[Category]
                 SET Name = @Name, Type = @Type
                 OUTPUT INSERTED.*
                 WHERE ID = @ID
@@ -100,13 +100,13 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<Category>> GetByUserIdAndTypeAsync(Ulid userId, string type)
         {
             const string sql = @"
-                SELECT * FROM dbo.Category
+                SELECT * FROM [dbo].[Category]
                 WHERE UserId = @UserId AND Type = @Type
             ";
 
             return await _connection.QueryAsync<Category>(
                 sql,
-                new { UserId = userId.ToString(), Type = type },
+                new { UserId = userId, Type = type },
                 _transaction
             );
         }

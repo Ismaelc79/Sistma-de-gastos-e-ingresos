@@ -3,8 +3,8 @@ namespace Application.DTOs.Transactions;
 public class CreateTransactionRequest
 {
     public int CategoryId { get; set; }
-    public string UserId { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
+    public Ulid UserId { get; set; } = Ulid.Empty!;
+    public string Name { get; set; } = null!;
     public string Description { get; set; } = string.Empty;
     public decimal Amount { get; set; }
 }

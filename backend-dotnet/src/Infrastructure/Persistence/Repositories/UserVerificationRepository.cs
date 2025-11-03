@@ -24,13 +24,13 @@ namespace Infrastructure.Persistence.Repositories
         public async Task AddAsync(UserVerification verification)
         {
             const string sql = @"
-                INSERT INTO dbo.UserVerification (ID, UserId, Code, ExpiresAt, Used)
-                VALUES (@ID, @UserId, @Code, @ExpiresAt, @Used)
+                INSERT INTO [dbo].[UserVerification] (ID, UserId, Code, ExpiresAt, Used, CreatedAt)
+                VALUES (@ID, @UserId, @Code, @ExpiresAt, @Used, @CreatedAt)
             ";
 
             await _connection.ExecuteAsync(
                 sql,
-                new { ID = verification.Id.ToString(), UserId = verification.UserId.ToString(), Code = verification.Code, ExpiresAt = verification.ExpiresAt, Used = verification.Used },
+                new { ID = verification.Id, UserId = verification.UserId, Code = verification.Code, ExpiresAt = verification.ExpiresAt, Used = verification.Used, CreatedAt = verification.CreatedAt },
                 _transaction
             );
         }
@@ -38,13 +38,13 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<UserVerification?> GetByIdAsync(Ulid id)
         {
             const string sql = @"
-                SELECT * FROM dbo.UserVerification
+                SELECT * FROM [dbo].[UserVerification]
                 WHERE ID = @ID
             ";
 
             return await _connection.QueryFirstOrDefaultAsync<UserVerification>(
                 sql,
-                new { ID = id.ToString() },
+                new { ID = id },
                 _transaction
             );
         }
@@ -52,13 +52,13 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<UserVerification?> GetByUserIdAsync(Ulid userId)
         {
             const string sql = @"
-                SELECT * FROM dbo.UserVerification
+                SELECT * FROM [dbo].[UserVerification]
                 WHERE UserId = @UserId
             ";
 
             return await _connection.QueryFirstOrDefaultAsync<UserVerification>(
                 sql,
-                new { UserId = userId.ToString() },
+                new { UserId = userId },
                 _transaction
             );
         }
@@ -66,13 +66,13 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<UserVerification?> GetByUserIdAndCodeAsync(Ulid userId, string code)
         {
             const string sql = @"
-                SELECT * FROM dbo.UserVerification
+                SELECT * FROM [dbo].[UserVerification]
                 WHERE UserId = @UserId AND Code = @Code
             ";
 
             return await _connection.QueryFirstOrDefaultAsync<UserVerification>(
                 sql,
-                new { UserId = userId.ToString(), Code = code },
+                new { UserId = userId, Code = code },
                 _transaction
             );
         }
@@ -80,14 +80,14 @@ namespace Infrastructure.Persistence.Repositories
         public async Task MarkAsUsedAsync(Ulid id)
         {
             const string sql = @"
-                UPDATE dbo.UserVerification
+                UPDATE [dbo].[UserVerification]
                 SET Used = 1
                 WHERE ID = @ID
             ";
 
             await _connection.ExecuteAsync(
                 sql,
-                new { ID = id.ToString() },
+                new { ID = id },
                 _transaction
             );
         }

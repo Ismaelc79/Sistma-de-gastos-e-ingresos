@@ -2,9 +2,9 @@ namespace Application.DTOs.Categories;
 
 public class CreateCategoryRequest
 {
-    public string UserId { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string Type { get; set; } = string.Empty;
+    public Ulid UserId { get; set; } = Ulid.Empty!;
+    public string Name { get; set; } = null!;
+    public string Type { get; set; } = null!;
 }
 
 //Decisiones de diseño:

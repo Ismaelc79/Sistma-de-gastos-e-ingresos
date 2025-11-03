@@ -39,5 +39,7 @@ namespace Domain.ValueObjects
                 if (hashBytes[i + 16] != hash2[i]) return false;
             return true;
         }
+
+        public static Password FromHash(string hash) => new Password(hash);
     }
 }

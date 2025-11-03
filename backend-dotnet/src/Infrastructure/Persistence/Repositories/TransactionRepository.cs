@@ -24,14 +24,14 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<Transaction> AddAsync(Transaction transaction)
         {
             const string sql = @"
-                INSERT INTO dbo.Transaction (CategoryId, UserId, Name, Description)
+                INSERT INTO [dbo].[Transaction] (CategoryId, UserId, Name, Description)
                 OUTPUT INSERTED.*
                 VALUES (@CategoryId, @UserId, @Name, @Description)
             ";
 
             return await _connection.QuerySingleAsync<Transaction>(
                 sql,
-                new { CategoryId = transaction.CategoryId, UserId = transaction.UserId.ToString(), Name = transaction.Name, Descripcion = transaction.Description },
+                new { CategoryId = transaction.CategoryId, UserId = transaction.UserId, Name = transaction.Name, Description = transaction.Description },
                 _transaction
             );
         }
@@ -39,7 +39,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<bool> DeleteAsync(int id)
         {
             const string sql = @"
-                DELETE FROM dbo.Transaction 
+                DELETE FROM [dbo].[Transaction]
                 WHERE ID = @ID
             ";
 
@@ -55,7 +55,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<Transaction>> GetByCategoryIdAsync(int categoryId)
         {
             const string sql = @"
-                SELECT * FROM dbo.Transaction
+                SELECT * FROM [dbo].[Transaction]
                 WHERE ID = @ID
             ";
 
@@ -69,7 +69,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<Transaction?> GetByIdAsync(int id)
         {
             const string sql = @"
-                SELECT * FROM dbo.Transaction
+                SELECT * FROM [dbo].[Transaction]
                 WHERE ID = @ID
             ";
 
@@ -83,13 +83,13 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<Transaction>> GetByUserIdAsync(Ulid userId)
         {
             const string sql = @"
-                SELECT * FROM dbo.Transaction
+                SELECT * FROM [dbo].[Transaction]
                 WHERE UserId = @UserId
             ";
 
             return await _connection.QueryAsync<Transaction>(
                 sql, 
-                new { UserId = userId.ToString() },
+                new { UserId = userId },
                 _transaction
             );
         }
@@ -97,7 +97,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<Transaction> UpdateAsync(Transaction transaction)
         {
             const string sql = @"
-                UPDATE dbo.Transaction
+                UPDATE [dbo].[Transaction]
                 SET Name = @Name, Description = @Description, Amount = @Amount, CategoryId = @CategoryId
                 OUTPUT INSERTED.*
                 WHERE ID = @ID
@@ -113,13 +113,13 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<Transaction>> GetByUserIdAndDateRangeAsync(Ulid userId, DateTime startDate, DateTime endDate)
         {
             const string sql = @"
-                SELECT * FROM dbo.Transaction
+                SELECT * FROM [dbo].[Transaction]
                 WHERE UserId = @UserId AND CreatedAt BETWEEN @StartDate AND @EndDate
             ";
 
             return await _connection.QueryAsync<Transaction>(
                 sql,
-                new { UserId = userId.ToString(), StartDate = startDate, EndDate = endDate },
+                new { UserId = userId, StartDate = startDate, EndDate = endDate },
                 _transaction
             );
         }

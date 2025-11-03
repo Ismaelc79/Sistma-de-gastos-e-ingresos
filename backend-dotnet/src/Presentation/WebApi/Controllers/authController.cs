@@ -1,6 +1,6 @@
 ﻿using Application.DTOs.Auth;
 using Application.Interfaces;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
@@ -16,8 +16,9 @@ namespace WebApi.Controllers
             this.authService = authService;
         }
 
+        [AllowAnonymous]
         [HttpPost("/register")]
-        public async Task<IActionResult> Register(RegisterRequest registerRequest)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
         {
             try
             {
@@ -31,8 +32,9 @@ namespace WebApi.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost("/login")]
-        public async Task<IActionResult> login(LoginRequest loginRequest)
+        public async Task<IActionResult> login([FromBody] LoginRequest loginRequest)
         {
             try
             {
@@ -45,7 +47,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("/refresh")]
-        public async Task<IActionResult> Refresh(RefreshTokenRequest refreshTokenRequest)
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest refreshTokenRequest)
         {
             try
             {

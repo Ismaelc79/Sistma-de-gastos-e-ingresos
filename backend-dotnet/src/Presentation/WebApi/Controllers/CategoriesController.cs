@@ -1,7 +1,11 @@
-﻿using System.Net;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Security.Claims;
 using Application.DTOs.Categories;
 using Application.DTOs.Transactions;
+using Application.Interfaces;
 using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -14,37 +18,51 @@ namespace WebApi.Controllers
     [Route("/api/[controller]")]
 
 
-     public class CategoriesController: ControllerBase
-
+    public class CategoriesController: ControllerBase
     {
+        private readonly ICategoryService _categoryService;
 
-        readonly CategoryService categoryService;
-
-
-        [HttpGet]
-        public IActionResult getCategories(){
-
-            return Ok(categoryService.GetCategoriesByUserIdAsync);
-           
+        public CategoriesController(ICategoryService categoryService)
+        {
+            _categoryService = categoryService;
         }
 
-        [HttpPost]
-        public IActionResult addCategorie(CreateCategoryRequest createCategory)
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetCategoriesByUserId()
         {
+            // Extracts user ID from the JW token
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized(new { message = "No se encontró el ID del usuario en el token" });
+
+            var userId = Ulid.Parse(userIdClaim);
+
+            var categorias = await _categoryService.GetCategoriesByUserIdAsync(userId); 
+            return Ok(categorias);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] CreateCategoryRequest createCategory)
+        {
             try
             {
+                // Extracts user ID from the JW token
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-              Task<CategoryDto> categoria = categoryService.CreateCategoryAsync(createCategory);
+                if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized(new { message = "No se encontró el ID del usuario en el token"});
+
+                // Assigns UserId to request before send it to service
+                createCategory.UserId = Ulid.Parse(userIdClaim);
+
+                CategoryDto categoria = await _categoryService.CreateCategoryAsync(createCategory);
                 return Created("", categoria);
             }
             catch (Exception ex) 
             {
-                return StatusCode(500, ex );
+                return StatusCode(500, new { message = ex.Message});
             }
-
-
         }
-
     }
 }

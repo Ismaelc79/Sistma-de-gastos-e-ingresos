@@ -21,7 +21,7 @@ public class UserService : IUserService
 
     public async Task<UserDto?> GetUserByIdAsync(Ulid id)
     {
-        var user = await _unitOfWork.User.GetByIdAsync(id);
+        var user = await _unitOfWork.User.GetByIdAsync(id) ?? throw new KeyNotFoundException("Usuario no encontrado");
         return user != null ? _mapper.Map<UserDto>(user) : null;
     }
 

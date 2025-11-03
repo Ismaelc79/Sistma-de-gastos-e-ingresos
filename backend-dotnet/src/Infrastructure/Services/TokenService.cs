@@ -35,7 +35,7 @@ namespace Infrastructure.Services
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email.Value),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("name", user.Name ?? string.Empty)
             };
