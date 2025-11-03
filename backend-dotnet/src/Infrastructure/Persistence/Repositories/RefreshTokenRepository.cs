@@ -91,5 +91,15 @@ namespace Infrastructure.Persistence.Repositories
                 _transaction
             );
         }
+
+        public async Task DeleteExpiredTokensAsync()
+        {
+            const string sql = @"
+                DELETE FROM [dbo].[RefreshToken]
+                WHERE DATEADD(DAY, -7, GETUTCDATE());
+            ";
+
+            await _connection.ExecuteAsync(sql);
+        }
     }
 }

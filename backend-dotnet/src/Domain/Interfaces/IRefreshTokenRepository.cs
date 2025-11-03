@@ -9,5 +9,6 @@ namespace Domain.Interfaces
         Task<IEnumerable<RefreshToken>> GetByUserIdAsync(Ulid userId);
         Task AddAsync(RefreshToken token);
         Task RevokeTokenAsync(Ulid id);
+        Task DeleteExpiredTokensAsync();
     }
 }
