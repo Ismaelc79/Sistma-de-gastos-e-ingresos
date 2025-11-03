@@ -86,7 +86,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<User> UpdateAsync(User user)
         {
             const string sql = @"
-                UPDATE FROM dbo.User
+                UPDATE FROM [dbo].[User]
                 SET Name = @Name, Email = @Email, PasswordHash = @PasswordHash, Phone = @Phone, Currency = @Currency, Language = @Language, Avatar = @Avatar
                 OUTPUT INSERTED.*
                 WHERE ID = @ID

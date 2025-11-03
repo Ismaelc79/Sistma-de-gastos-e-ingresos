@@ -38,7 +38,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<UserVerification?> GetByIdAsync(Ulid id)
         {
             const string sql = @"
-                SELECT * FROM dbo.UserVerification
+                SELECT * FROM [dbo].[UserVerification]
                 WHERE ID = @ID
             ";
 
@@ -52,7 +52,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<UserVerification?> GetByUserIdAsync(Ulid userId)
         {
             const string sql = @"
-                SELECT * FROM dbo.UserVerification
+                SELECT * FROM [dbo].[UserVerification]
                 WHERE UserId = @UserId
             ";
 
@@ -66,7 +66,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<UserVerification?> GetByUserIdAndCodeAsync(Ulid userId, string code)
         {
             const string sql = @"
-                SELECT * FROM dbo.UserVerification
+                SELECT * FROM [dbo].[UserVerification]
                 WHERE UserId = @UserId AND Code = @Code
             ";
 
@@ -80,7 +80,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task MarkAsUsedAsync(Ulid id)
         {
             const string sql = @"
-                UPDATE dbo.UserVerification
+                UPDATE [dbo].[UserVerification]
                 SET Used = 1
                 WHERE ID = @ID
             ";

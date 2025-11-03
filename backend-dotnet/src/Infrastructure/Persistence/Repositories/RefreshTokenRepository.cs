@@ -38,7 +38,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<RefreshToken?> GetByIdAsync(Ulid id)
         {
             const string sql = @"
-                SELECT * FROM dbo.RefreshToken 
+                SELECT * FROM [dbo].[RefreshToken] 
                 WHERE ID = @ID
             ";
 
@@ -52,7 +52,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<RefreshToken?> GetByJwtIdAsync(string jwtId)
         {
             const string sql = @"
-                SELECT * FROM dbo.RefreshToken
+                SELECT * FROM [dbo].[RefreshToken]
                 WHERE JwtId = @JwtId
             ";
 
@@ -66,7 +66,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<RefreshToken>> GetByUserIdAsync(Ulid userId)
         {
             const string sql = @"
-                SELECT * FROM dbo.RefreshToken
+                SELECT * FROM [dbo].[RefreshToken]
                 WHERE UserId = @UserId
             ";
 
@@ -80,7 +80,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task RevokeTokenAsync(Ulid id)
         {
             const string sql = @"
-                UPDATE dbo.RefreshToken
+                UPDATE [dbo].[RefreshToken]
                 SET Revoked = 1
                 WHERE ID = @ID
             ";
