@@ -13,6 +13,7 @@ using Application.Services;
 using Infrastructure.Services;
 using AutoMapper;
 using Application.Mappings;
+using Infrastructure.BackgroundServices;
 
 namespace Infrastructure.DependencyInjection
 {
@@ -34,6 +35,9 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UserService>();
+
+            // Register background services
+            services.AddHostedService<TokenCleanupService>();
 
             return services;
         }

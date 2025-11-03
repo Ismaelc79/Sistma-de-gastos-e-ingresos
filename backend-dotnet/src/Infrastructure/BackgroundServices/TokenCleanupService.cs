@@ -12,24 +12,28 @@ namespace Infrastructure.BackgroundServices
     public class TokenCleanupService : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public TokenCleanupService(IServiceProvider serviceProvider, IUnitOfWork unitOfWork)
+        public TokenCleanupService(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            _unitOfWork = unitOfWork;
-
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                using var scope = _serviceProvider.CreateScope();
-                var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                try
+                {
+                    using var scope = _serviceProvider.CreateScope();
+                    var _unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-                // Remove tokens that expired 7 days ago
-                await _unitOfWork.RefreshToken.DeleteExpiredTokensAsync();
+                    // Remove tokens that expired 7 days ago
+                    await _unitOfWork.RefreshToken.DeleteExpiredTokensAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[TokenCleanupService] Error: {ex.Message}");
+                }
                 
                 await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
             }

@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Domain.ValueObjects;
 using Domain.Interfaces;
+using System.Security.Claims;
 
 namespace Application.Services;
 
@@ -132,13 +133,13 @@ public class AuthService : IAuthService
     public async Task<AuthResponse> RefreshTokenAsync(RefreshTokenRequest request)
     {
         // Validar refresh token
-        var principal = _tokenService.GetPrincipalFromExpiredToken(request.RefreshToken);
+        var principal = _tokenService.GetPrincipalFromExpiredToken(request.AccessToken);
         if (principal == null)
         {
             throw new UnauthorizedAccessException("Token inválido");
         }
 
-        var jwtId = _tokenService.GetJwtIdFromToken(request.RefreshToken);
+        var jwtId = _tokenService.GetJwtIdFromToken(request.AccessToken);
         var refreshToken = await _unitOfWork.RefreshToken.GetByJwtIdAsync(jwtId);
 
         if (refreshToken == null || refreshToken.Revoked || refreshToken.ExpiresAt < DateTime.UtcNow)
@@ -147,7 +148,7 @@ public class AuthService : IAuthService
         }
 
         // Obtener usuario
-        var userIdString = principal.FindFirst("sub")?.Value;
+        var userIdString = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userIdString))
         {
             throw new UnauthorizedAccessException("Usuario no encontrado en token");
@@ -178,7 +179,7 @@ public class AuthService : IAuthService
         var newRefreshToken = new RefreshToken(
             id: Ulid.NewUlid(),
             userId: user.Id,
-            jwtId: jwtId,
+            jwtId: newJwtId,
             expiresAt: DateTime.UtcNow.AddDays(7)
         );
 
