@@ -26,6 +26,9 @@ namespace Infrastructure.DependencyInjection
 
             // Register respositories
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<ITransactionService, TransactionService>();
 
             // Register services
             services.AddAutoMapper(x =>
