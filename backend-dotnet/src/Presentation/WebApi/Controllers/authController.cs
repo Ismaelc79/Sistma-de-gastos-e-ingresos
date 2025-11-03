@@ -17,7 +17,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("/register")]
-        public async Task<IActionResult> Register(RegisterRequest registerRequest)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("/login")]
-        public async Task<IActionResult> login(LoginRequest loginRequest)
+        public async Task<IActionResult> login([FromBody] LoginRequest loginRequest)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("/refresh")]
-        public async Task<IActionResult> Refresh(RefreshTokenRequest refreshTokenRequest)
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest refreshTokenRequest)
         {
             try
             {

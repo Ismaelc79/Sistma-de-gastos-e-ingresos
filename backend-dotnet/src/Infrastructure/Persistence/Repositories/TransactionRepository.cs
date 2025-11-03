@@ -31,7 +31,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QuerySingleAsync<Transaction>(
                 sql,
-                new { CategoryId = transaction.CategoryId, UserId = transaction.UserId, Name = transaction.Name, Descripcion = transaction.Description },
+                new { CategoryId = transaction.CategoryId, UserId = transaction.UserId, Name = transaction.Name, Description = transaction.Description },
                 _transaction
             );
         }

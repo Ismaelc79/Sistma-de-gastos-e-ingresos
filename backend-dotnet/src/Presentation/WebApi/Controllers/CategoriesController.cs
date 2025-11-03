@@ -26,14 +26,14 @@ namespace WebApi.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetCategoriesByUserId(Ulid userID){
-
+        public async Task<IActionResult> GetCategoriesByUserId([FromQuery] Ulid userID)
+        {
             var categorias = await _categoryService.GetCategoriesByUserIdAsync(userID); 
             return Ok(categorias);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(CreateCategoryRequest createCategory)
+        public async Task<IActionResult> Add([FromBody] CreateCategoryRequest createCategory)
         {
             try
             {

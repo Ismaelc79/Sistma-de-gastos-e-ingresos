@@ -1,33 +1,41 @@
-﻿using Application.Interfaces;
+﻿using Application.DTOs.Transactions;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
 {
     [ApiController]
     [Route("/api/[controller]")]
-    public class transactionsController : ControllerBase
+    public class TransactionsController : ControllerBase
     {
 
 
         private readonly ITransactionService transactionService;
 
-        public transactionsController(ITransactionService transactionService)
+        public TransactionsController(ITransactionService transactionService)
         {
             this.transactionService = transactionService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(Ulid userID) {
-
+        public async Task<IActionResult> Get([FromQuery] Ulid userID)
+        {
             var transacciones = await transactionService.GetTransactionsByUserIdAsync(userID);
             return Ok(transacciones);
         }
 
         [HttpPost]
-        public IActionResult Add()
+        public async Task<IActionResult> Add([FromBody] CreateTransactionRequest transactionRequest)
         {
-
-            return Created("","");
+            try
+            {
+                var transaction = await transactionService.CreateTransactionAsync(transactionRequest);
+                return Created("", transaction);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(401, new { message = ex.Message });
+            }
         }
 
     }

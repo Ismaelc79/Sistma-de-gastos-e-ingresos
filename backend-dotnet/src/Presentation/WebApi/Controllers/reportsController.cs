@@ -16,11 +16,9 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("/summary")]
-        public async Task<IActionResult> Get(Ulid userId, string categoryType, DateTime startDate, DateTime endDate) {
-
+        public async Task<IActionResult> Get(Ulid userId, string categoryType, DateTime startDate, DateTime endDate)
+        {
             return Ok(await reportService.GetCategorySummaryAsync(userId, categoryType, startDate, endDate));
-
-
         }
     }
 }
