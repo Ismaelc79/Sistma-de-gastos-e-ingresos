@@ -1,8 +1,11 @@
-﻿using System.Net;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Security.Claims;
 using Application.DTOs.Categories;
 using Application.DTOs.Transactions;
 using Application.Interfaces;
 using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -24,19 +27,35 @@ namespace WebApi.Controllers
             _categoryService = categoryService;
         }
 
-
+        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetCategoriesByUserId([FromQuery] Ulid userID)
+        public async Task<IActionResult> GetCategoriesByUserId()
         {
-            var categorias = await _categoryService.GetCategoriesByUserIdAsync(userID); 
+            // Extracts user ID from the JW token
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized(new { message = "No se encontró el ID del usuario en el token" });
+
+            var userId = Ulid.Parse(userIdClaim);
+
+            var categorias = await _categoryService.GetCategoriesByUserIdAsync(userId); 
             return Ok(categorias);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] CreateCategoryRequest createCategory)
         {
             try
             {
+                // Extracts user ID from the JW token
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized(new { message = "No se encontró el ID del usuario en el token"});
+
+                // Assigns UserId to request before send it to service
+                createCategory.UserId = Ulid.Parse(userIdClaim);
+
                 CategoryDto categoria = await _categoryService.CreateCategoryAsync(createCategory);
                 return Created("", categoria);
             }
