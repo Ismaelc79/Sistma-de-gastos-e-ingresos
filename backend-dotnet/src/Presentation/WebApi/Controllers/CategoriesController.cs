@@ -15,10 +15,8 @@ namespace WebApi.Controllers
     [Route("/api/[controller]")]
 
 
-     public class CategoriesController: ControllerBase
-
+    public class CategoriesController: ControllerBase
     {
-
         private readonly ICategoryService _categoryService;
 
         public CategoriesController(ICategoryService categoryService)
@@ -32,26 +30,20 @@ namespace WebApi.Controllers
 
             var categorias = await _categoryService.GetCategoriesByUserIdAsync(userID); 
             return Ok(categorias);
-            
         }
 
         [HttpPost]
-        public IActionResult Add(CreateCategoryRequest createCategory)
+        public async Task<IActionResult> Add(CreateCategoryRequest createCategory)
         {
-
             try
             {
-
-              Task<CategoryDto> categoria = _categoryService.CreateCategoryAsync(createCategory);
+                CategoryDto categoria = await _categoryService.CreateCategoryAsync(createCategory);
                 return Created("", categoria);
             }
             catch (Exception ex) 
             {
-                return StatusCode(500, ex );
+                return StatusCode(500, new { message = ex.Message});
             }
-
-
         }
-
     }
 }

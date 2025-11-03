@@ -19,7 +19,8 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(Ulid id) {
+        public async Task<IActionResult> Get(Ulid id) 
+        {
 
             return Ok(await userService.GetUserByIdAsync(id));
         }

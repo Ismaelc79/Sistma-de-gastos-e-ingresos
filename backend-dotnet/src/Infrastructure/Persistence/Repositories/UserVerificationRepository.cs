@@ -24,13 +24,13 @@ namespace Infrastructure.Persistence.Repositories
         public async Task AddAsync(UserVerification verification)
         {
             const string sql = @"
-                INSERT INTO [dbo].[UserVerification] (ID, UserId, Code, ExpiresAt, Used)
-                VALUES (@ID, @UserId, @Code, @ExpiresAt, @Used)
+                INSERT INTO [dbo].[UserVerification] (ID, UserId, Code, ExpiresAt, Used, CreatedAt)
+                VALUES (@ID, @UserId, @Code, @ExpiresAt, @Used, @CreatedAt)
             ";
 
             await _connection.ExecuteAsync(
                 sql,
-                new { ID = verification.Id.ToString(), UserId = verification.UserId.ToString(), Code = verification.Code, ExpiresAt = verification.ExpiresAt, Used = verification.Used },
+                new { ID = verification.Id.ToString(), UserId = verification.UserId.ToString(), Code = verification.Code, ExpiresAt = verification.ExpiresAt, Used = verification.Used, CreatedAt = verification.CreatedAt },
                 _transaction
             );
         }

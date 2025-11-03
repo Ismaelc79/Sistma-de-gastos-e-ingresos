@@ -48,11 +48,7 @@ public class CategoryService : ICategoryService
 
     public async Task<CategoryDto> UpdateCategoryAsync(int id, CreateCategoryRequest request)
     {
-        var category = await _unitOfWork.Category.GetByIdAsync(id);
-        if (category == null)
-        {
-            throw new KeyNotFoundException($"Categoría con ID {id} no encontrada");
-        }
+        var category = await _unitOfWork.Category.GetByIdAsync(id) ?? throw new KeyNotFoundException($"Categoría con ID {id} no encontrada");
 
         category.EditCategory(request.Name, request.Type);
 
@@ -64,6 +60,12 @@ public class CategoryService : ICategoryService
 
     public async Task<bool> DeleteCategoryAsync(int id)
     {
-        return await _unitOfWork.Category.DeleteAsync(id);
+        if (await _unitOfWork.Category.DeleteAsync(id))
+        {
+            await _unitOfWork.SaveChangesAsync();
+
+            return true;
+        }
+        else throw new Exception($"No fue posible eliminar la categoría con ID {id}"); ;
     }
 }

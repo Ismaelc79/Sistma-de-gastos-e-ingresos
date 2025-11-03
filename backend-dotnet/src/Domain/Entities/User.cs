@@ -5,12 +5,12 @@ namespace Domain.Entities
     public class User
     {
         public Ulid Id { get; private set; }
-        public string Name { get; private set; }
-        public Email Email { get; private set; }
-        public Password PasswordHash { get; private set; }
+        public string Name { get; private set; } = null!;
+        public Email Email { get; private set; } = null!;
+        public Password PasswordHash { get; private set; } = null!;
         public PhoneNumber? Phone { get; private set; }
-        public Currency Currency { get; private set; }
-        public string Language { get; private set; }
+        public Currency Currency { get; private set; } = null!;
+        public string Language { get; private set; } = null!;
         public string? Avatar { get; private set; }
         public bool IsVerified { get; private set; }
         public DateTime CreatedAt { get; private set; }
@@ -21,6 +21,8 @@ namespace Domain.Entities
         public List<Transaction> Transactions { get; private set; } = new();
         public List<UserVerification> Verifications { get; private set; } = new();
         public List<RefreshToken> RefreshTokens { get; private set; } = new();
+
+        public User() { }
 
         public User(Ulid id, string name, Email email, Password password,
                     PhoneNumber? phone = null, Currency? currency = null,
