@@ -95,6 +95,14 @@ public class AuthService : IAuthService
             throw new UnauthorizedAccessException("Email o contraseña incorrectos");
         }
 
+        // Revoca tokens anteriores
+        var refreshTokens = await _unitOfWork.RefreshToken.GetByUserIdAsync(user.Id);
+
+        foreach (var tokens in refreshTokens)
+        {
+            await _unitOfWork.RefreshToken.RevokeTokenAsync(tokens.Id);
+        }
+
         // Generar tokens
         var accessToken = _tokenService.GenerateAccessToken(user);
         var refreshTokenValue = _tokenService.GenerateRefreshToken();

@@ -94,7 +94,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QuerySingleAsync<User>(
                 sql,
-                new { ID = user.Id.ToString(), Name = user.Name, Email = user.Email, PasswordHash = user.PasswordHash, Phone = user.Phone, Currency = user.Currency, Language = user.Language, Avatar = user.Avatar},
+                new { ID = user.Id, Name = user.Name, Email = user.Email, PasswordHash = user.PasswordHash, Phone = user.Phone, Currency = user.Currency, Language = user.Language, Avatar = user.Avatar},
                 _transaction
             );
         }

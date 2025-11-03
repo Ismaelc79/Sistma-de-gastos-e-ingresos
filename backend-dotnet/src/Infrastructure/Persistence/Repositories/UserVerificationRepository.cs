@@ -30,7 +30,7 @@ namespace Infrastructure.Persistence.Repositories
 
             await _connection.ExecuteAsync(
                 sql,
-                new { ID = verification.Id.ToString(), UserId = verification.UserId.ToString(), Code = verification.Code, ExpiresAt = verification.ExpiresAt, Used = verification.Used, CreatedAt = verification.CreatedAt },
+                new { ID = verification.Id, UserId = verification.UserId, Code = verification.Code, ExpiresAt = verification.ExpiresAt, Used = verification.Used, CreatedAt = verification.CreatedAt },
                 _transaction
             );
         }
@@ -44,7 +44,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QueryFirstOrDefaultAsync<UserVerification>(
                 sql,
-                new { ID = id.ToString() },
+                new { ID = id },
                 _transaction
             );
         }
@@ -58,7 +58,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QueryFirstOrDefaultAsync<UserVerification>(
                 sql,
-                new { UserId = userId.ToString() },
+                new { UserId = userId },
                 _transaction
             );
         }
@@ -72,7 +72,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QueryFirstOrDefaultAsync<UserVerification>(
                 sql,
-                new { UserId = userId.ToString(), Code = code },
+                new { UserId = userId, Code = code },
                 _transaction
             );
         }
@@ -87,7 +87,7 @@ namespace Infrastructure.Persistence.Repositories
 
             await _connection.ExecuteAsync(
                 sql,
-                new { ID = id.ToString() },
+                new { ID = id },
                 _transaction
             );
         }

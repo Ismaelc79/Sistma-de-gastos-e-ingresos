@@ -31,7 +31,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QuerySingleAsync<Transaction>(
                 sql,
-                new { CategoryId = transaction.CategoryId, UserId = transaction.UserId.ToString(), Name = transaction.Name, Descripcion = transaction.Description },
+                new { CategoryId = transaction.CategoryId, UserId = transaction.UserId, Name = transaction.Name, Descripcion = transaction.Description },
                 _transaction
             );
         }
@@ -89,7 +89,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QueryAsync<Transaction>(
                 sql, 
-                new { UserId = userId.ToString() },
+                new { UserId = userId },
                 _transaction
             );
         }
@@ -119,7 +119,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QueryAsync<Transaction>(
                 sql,
-                new { UserId = userId.ToString(), StartDate = startDate, EndDate = endDate },
+                new { UserId = userId, StartDate = startDate, EndDate = endDate },
                 _transaction
             );
         }

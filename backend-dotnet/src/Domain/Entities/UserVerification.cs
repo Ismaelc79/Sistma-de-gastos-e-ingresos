@@ -4,11 +4,13 @@ namespace Domain.Entities
     {
         public Ulid Id { get; private set; }
         public Ulid UserId { get; private set; }
-        public User User { get; private set; }
-        public string Code { get; private set; }
+        public User? User { get; private set; }
+        public string Code { get; private set; } = null!;
         public DateTime ExpiresAt { get; private set; }
         public bool Used { get; private set; }
         public DateTime CreatedAt { get; private set; }
+
+        public UserVerification() { }
 
         public UserVerification(Ulid id, Ulid userId, string code, DateTime? expiresAt = null)
         {

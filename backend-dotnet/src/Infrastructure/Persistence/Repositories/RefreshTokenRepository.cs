@@ -30,7 +30,7 @@ namespace Infrastructure.Persistence.Repositories
 
             await _connection.ExecuteAsync(
                 sql, 
-                new { ID = token.Id.ToString(), UserId = token.UserId.ToString(), JwtId = token.JwtId, ExpiresAt = token.ExpiresAt, Revoked = token.Revoked }, 
+                new { ID = token.Id, UserId = token.UserId, JwtId = token.JwtId, ExpiresAt = token.ExpiresAt, Revoked = token.Revoked }, 
                 _transaction
             );
         }
@@ -44,7 +44,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QueryFirstOrDefaultAsync<RefreshToken>(
                 sql, 
-                new { ID = id.ToString() },
+                new { ID = id },
                 _transaction
             );
         }
@@ -72,7 +72,7 @@ namespace Infrastructure.Persistence.Repositories
 
             return await _connection.QueryAsync<RefreshToken>(
                 sql,
-                new { UserId = userId.ToString() },
+                new { UserId = userId },
                 _transaction
            );
         }
@@ -87,7 +87,7 @@ namespace Infrastructure.Persistence.Repositories
 
             await _connection.ExecuteAsync(
                 sql,
-                new { ID = id.ToString() },
+                new { ID = id },
                 _transaction
             );
         }
