@@ -82,7 +82,7 @@ export const LoginPage = () => {
             </div>
           </div>
           <h2 className="text-3xl font-bold text-dark-900">
-            Welcome Back
+            Welcome!
           </h2>
           <p className="mt-2 text-sm text-dark-600">
             Sign in to manage your finances
@@ -118,20 +118,10 @@ export const LoginPage = () => {
               error={formErrors.password}
               required
               autoComplete="current-password"
+              showPasswordToggle
             />
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-dark-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-dark-700">
-                  Remember me
-                </label>
-              </div>
-
+            <div className="flex items-center justify-end">
               <div className="text-sm">
                 <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
                   Forgot password?
