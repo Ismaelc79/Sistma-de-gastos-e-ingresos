@@ -24,14 +24,14 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<Transaction> AddAsync(Transaction transaction)
         {
             const string sql = @"
-                INSERT INTO [dbo].[Transaction] (CategoryId, UserId, Name, Description)
+                INSERT INTO [dbo].[Transaction] (CategoryId, UserId, Name, Description, Amount)
                 OUTPUT INSERTED.*
-                VALUES (@CategoryId, @UserId, @Name, @Description)
+                VALUES (@CategoryId, @UserId, @Name, @Description, @Amount)
             ";
 
             return await _connection.QuerySingleAsync<Transaction>(
                 sql,
-                new { CategoryId = transaction.CategoryId, UserId = transaction.UserId, Name = transaction.Name, Description = transaction.Description },
+                new { CategoryId = transaction.CategoryId, UserId = transaction.UserId, Name = transaction.Name, Description = transaction.Description, Amount = transaction.Amount},
                 _transaction
             );
         }
