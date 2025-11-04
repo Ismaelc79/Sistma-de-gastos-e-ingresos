@@ -17,7 +17,7 @@ namespace WebApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("/register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
         {
             try
@@ -33,7 +33,7 @@ namespace WebApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("/login")]
+        [HttpPost("login")]
         public async Task<IActionResult> login([FromBody] LoginRequest loginRequest)
         {
             try
@@ -46,7 +46,7 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpPost("/refresh")]
+        [HttpPost("refresh")]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest refreshTokenRequest)
         {
             try
@@ -60,13 +60,13 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpPost("/phone/start")]
+        [HttpPost("phone/start")]
         public IActionResult phoneStart()
         {
             return Ok();
         }
 
-        [HttpPost("/phone/verify")]
+        [HttpPost("phone/verify")]
         public IActionResult phoneVerify()
         {
             return Ok();
