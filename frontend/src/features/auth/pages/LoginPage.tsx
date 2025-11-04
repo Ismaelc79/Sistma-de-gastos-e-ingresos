@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../shared/stores/authStore';
 import { Button, Input, Card } from '../../../shared/ui';
+import axios from 'axios';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -47,8 +48,9 @@ export const LoginPage = () => {
     }
 
     try {
-      await login(formData);
-      navigate('/dashboard');
+       await login(formData);
+       console.log('Login successful');
+       navigate('/dashboard');
     } catch (error) {
       // Error is handled by store
       console.error('Login error:', error);
