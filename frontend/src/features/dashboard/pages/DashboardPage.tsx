@@ -11,7 +11,7 @@ export const DashboardPage = () => {
 
   useEffect(() => {
     init();
-  },[]);
+  }, []);
 
   const init = async () => {
     setCategorias(await getCategories());
@@ -35,10 +35,18 @@ export const DashboardPage = () => {
             <div>
               <p className="text-sm font-medium text-dark-600">Total Balance</p>
               <p className="text-2xl font-bold text-dark-900 mt-1">
-                
-                ${transacciones.reduce((acc, item)=>{
-                  return acc + item.amount
-                },0.00)}.00
+                $
+                {transacciones.reduce((acc, item) => {
+                  if (
+                    categorias.find((c) => c.id == item.categoryId)?.type ==
+                    "Expense"
+                  ) {
+                    return acc - item.amount;
+                  } else {
+                    return acc + item.amount;
+                  }
+                }, 0.0)}
+                .00
               </p>
               <p className="text-sm text-green-600 mt-1">
                 +12.5% from last month
@@ -66,11 +74,19 @@ export const DashboardPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-dark-600">Total Income</p>
-              <p className="text-2xl font-bold text-dark-900 mt-1">${transacciones.reduce((acc, item)=>{
-
-
-                  return acc + item.amount
-                },0)}.00</p>
+              <p className="text-2xl font-bold text-dark-900 mt-1">
+                $
+                {transacciones.reduce((acc, item) => {
+                  if (
+                    categorias.find((f) => f.id == item.categoryId)?.type ==
+                    "Income"
+                  ) {
+                    return acc + item.amount;
+                  }
+                  return acc;
+                }, 0)}
+                .00
+              </p>
               <p className="text-sm text-green-600 mt-1">
                 +8.2% from last month
               </p>
@@ -99,7 +115,19 @@ export const DashboardPage = () => {
               <p className="text-sm font-medium text-dark-600">
                 Total Expenses
               </p>
-              <p className="text-2xl font-bold text-dark-900 mt-1">$4,691.00</p>
+              <p className="text-2xl font-bold text-dark-900 mt-1">
+                $
+                {transacciones.reduce((acc, item) => {
+                  if (
+                    categorias.find((f) => f.id == item.categoryId)?.type ==
+                    "Expense"
+                  ) {
+                    return acc + item.amount;
+                  }
+                  return acc;
+                }, 0)}
+                .00
+              </p>
               <p className="text-sm text-red-600 mt-1">+3.1% from last month</p>
             </div>
             <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
@@ -153,7 +181,7 @@ export const DashboardPage = () => {
             Recent Transactions
           </h2>
           <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map((i) => (
+            {transacciones.map((t, i) => (
               <div key={i} className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
@@ -173,12 +201,21 @@ export const DashboardPage = () => {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-dark-900">
-                      Shopping
+                      {t.name}
                     </p>
                     <p className="text-xs text-dark-500">Today, 3:30 PM</p>
                   </div>
                 </div>
-                <p className="text-sm font-semibold text-red-600">-$45.00</p>
+                {categorias.find((c) => c.id == t.categoryId)?.type ==
+                "Expense" ? (
+                  <p className="text-sm font-semibold text-red-600">
+                    -${t.amount}.00
+                  </p>
+                ) : (
+                  <p className="text-sm font-semibold text-green-600">
+                    +${t.amount}.00
+                  </p>
+                )}
               </div>
             ))}
           </div>
@@ -189,50 +226,28 @@ export const DashboardPage = () => {
             Spending by Category
           </h2>
           <div className="space-y-3">
-            {[
-              { name: "Food", amount: 1234, percent: 35, color: "bg-blue-500" },
-              {
-                name: "Transportation",
-                amount: 856,
-                percent: 24,
-                color: "bg-green-500",
-              },
-              {
-                name: "Entertainment",
-                amount: 654,
-                percent: 18,
-                color: "bg-yellow-500",
-              },
-              {
-                name: "Shopping",
-                amount: 432,
-                percent: 12,
-                color: "bg-red-500",
-              },
-              {
-                name: "Others",
-                amount: 389,
-                percent: 11,
-                color: "bg-purple-500",
-              },
-            ].map((category) => (
-              <div key={category.name}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium text-dark-700">
-                    {category.name}
-                  </span>
-                  <span className="text-sm font-semibold text-dark-900">
-                    ${category.amount}
-                  </span>
+            {categorias.filter(f=> f.type == 'Expense')
+              .map((category,i) => (
+                <div key={category.name}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium text-dark-700">
+                      {category.name}
+                    </span>
+                    <span className="text-sm font-semibold text-dark-900">
+                      ${transacciones.filter(f=> f.categoryId == category.id).reduce((acc,item)=>{
+                          return acc + item.amount
+                      },0)}
+                    </span>
+                  </div>
+                  <div className="w-full bg-dark-200 rounded-full h-2">
+                    <div
+                      // className={`${category.color} h-2 rounded-full`}
+                       className={`bg-[#50d71${i}] h-2 rounded-full`}
+                      // style={{ width: `${category.percent}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="w-full bg-dark-200 rounded-full h-2">
-                  <div
-                    className={`${category.color} h-2 rounded-full`}
-                    style={{ width: `${category.percent}%` }}
-                  />
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </Card>
       </div>
