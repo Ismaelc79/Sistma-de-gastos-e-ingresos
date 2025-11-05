@@ -18,11 +18,11 @@ namespace WebApi.Controllers
     [Route("/api/[controller]")]
 
 
-    public class CategoriesController: ControllerBase
+    public class categoriesController: ControllerBase
     {
         private readonly ICategoryService _categoryService;
 
-        public CategoriesController(ICategoryService categoryService)
+        public categoriesController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
         }

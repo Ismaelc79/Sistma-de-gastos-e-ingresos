@@ -8,6 +8,7 @@ import { ProfilePage } from '../../features/profile/pages/ProfilePage';
 
 import { MainLayout } from '../../shared/layouts/MainLayout';
 import { ProtectedRoute } from './ProtectedRoute';
+import { CategoriesPages } from '../../features/categories/pages/CategoriesPages';
 
 export const AppRoutes = () => {
   return (
@@ -24,6 +25,17 @@ export const AppRoutes = () => {
             <ProtectedRoute>
               <MainLayout>
                 <DashboardPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+         <Route
+          path="/categories"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <CategoriesPages />
               </MainLayout>
             </ProtectedRoute>
           }

@@ -8,13 +8,13 @@ namespace WebApi.Controllers
 {
     [ApiController]
     [Route("/api/[controller]")]
-    public class TransactionsController : ControllerBase
+    public class transactionsController : ControllerBase
     {
 
 
         private readonly ITransactionService transactionService;
 
-        public TransactionsController(ITransactionService transactionService)
+        public transactionsController(ITransactionService transactionService)
         {
             this.transactionService = transactionService;
         }

@@ -50,6 +50,19 @@ public class UserService : IUserService
         if (!string.IsNullOrEmpty(request.Currency))
             user.UpdateProfile(currency: new Currency(request.Currency));
 
+        if (!string.IsNullOrEmpty(request.Password) && !string.IsNullOrEmpty(request.NewPassword))
+        {
+            // Hash la nueva contrasenia
+            if (!user.PasswordHash.Verify(request.Password))
+            {
+                throw new UnauthorizedAccessException("Contraseña actual incorrecta");
+            }
+
+            var newPasswordd = Password.CreateHashed(request.NewPassword);
+
+            user.ChangePassword(newPasswordd);
+        }
+
         var updatedUser = await _unitOfWork.User.UpdateAsync(user);
         await _unitOfWork.SaveChangesAsync();
 

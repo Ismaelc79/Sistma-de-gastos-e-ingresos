@@ -1,26 +1,26 @@
-export type TransactionType = 'income' | 'expense';
+export type TransactionType = 'Income' | 'Expense';
 
 export interface TransactionCategory {
-  id: string;
+  id: number;
   name: string;
+  type: string;
 }
 
 export interface Transaction {
-  id: string;
-  type: TransactionType;
-  amount: number;
-  categoryId: string;
-  categoryName: string;
-  description?: string;
-  date: string; // ISO string
+   id: number,
+    categoryId: number,
+    userId: string,
+    name: string,
+    description: string,
+    amount: number,
+    createdAt: string
 }
 
 export interface TransactionInput {
-  type: TransactionType;
-  amount: number;
-  categoryId: string;
-  description?: string;
-  date: string; // ISO string
+  categoryId: number,
+  name: string,
+  description: string,
+  amount: number
 }
 
 export interface TransactionFilters {
