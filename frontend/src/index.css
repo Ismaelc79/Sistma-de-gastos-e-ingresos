@@ -7,3 +7,60 @@
     @apply bg-white text-dark-900;
   }
 }
+
+/* Theme overrides: apply when html has class .theme-dark */
+html.theme-dark body { background-color: #0f172a; color: #f1f5f9; }
+
+/* Background overrides */
+html.theme-dark .bg-white { background-color: #0f172a !important; }
+html.theme-dark .bg-dark-50 { background-color: #0b1220 !important; }
+html.theme-dark .bg-dark-100 { background-color: #0f172a !important; }
+html.theme-dark .bg-dark-200 { background-color: #1e293b !important; }
+
+/* Form controls backgrounds and borders */
+html.theme-dark input:not([type="checkbox"]):not([type="radio"]),
+html.theme-dark select,
+html.theme-dark textarea {
+  background-color: #0f172a !important; /* slate-900 */
+  color: #e2e8f0 !important; /* slate-200 */
+  border-color: #334155 !important; /* slate-700 */
+}
+
+/* Placeholder visibility in dark mode */
+html.theme-dark input::placeholder,
+html.theme-dark textarea::placeholder {
+  color: #94a3b8 !important; /* slate-400 */
+  opacity: 1; /* ensure visible */
+}
+
+/* Border overrides */
+html.theme-dark .border-dark-200 { border-color: #334155 !important; }
+html.theme-dark .border-dark-300 { border-color: #475569 !important; }
+html.theme-dark .border-dark-800 { border-color: #1e293b !important; }
+
+/* Text overrides */
+html.theme-dark .text-dark-900 { color: #f1f5f9 !important; }
+html.theme-dark .text-dark-700 { color: #e2e8f0 !important; }
+html.theme-dark .text-dark-600 { color: #cbd5e1 !important; }
+html.theme-dark .text-dark-500 { color: #94a3b8 !important; }
+html.theme-dark .text-dark-400 { color: #64748b !important; }
+html.theme-dark .text-dark-300 { color: #475569 !important; }
+
+/* Hover utilities */
+html.theme-dark .hover\:bg-dark-100:hover { background-color: #1e293b !important; }
+
+/* Disabled utilities (inputs) */
+html.theme-dark .disabled\:bg-dark-100:disabled { background-color: #1e293b !important; }
+
+/* Auth pages background (Login/Register) */
+.auth-bg {
+  background-image: linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #f1f5f9 100%);
+}
+html.theme-dark .auth-bg {
+  background-color: #0b1220;
+  background-image: radial-gradient(1400px 800px at -10% -10%, #0b1220 0%, #0f172a 40%, #0b1220 100%) !important;
+}
+
+/* Outline button better hover in dark */
+.btn-outline {}
+html.theme-dark .btn-outline:hover { background-color: rgba(59, 130, 246, 0.12) !important; }
