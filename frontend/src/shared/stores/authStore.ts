@@ -24,10 +24,7 @@ export const useAuthStore = create<AuthStore>()(
       login: async (credentials: LoginRequest) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await axios.post<AuthResponse>(import.meta.env.VITE_API_URL + '/login', credentials);
-          if (response.status !== 200) {
-            throw new Error('Login failed');
-          }
+          const response = await axios.post<AuthResponse>(import.meta.env.VITE_API_URL + '/auth/login', credentials);
           const { user, accessToken, refreshToken } = response.data;
 
           // Store tokens in localStorage
@@ -43,8 +40,11 @@ export const useAuthStore = create<AuthStore>()(
             error: null,
           });
         } catch (error: any) {
+       
           const errorMessage = error.response?.data?.message || 'Login failed';
           set({ isLoading: false, error: errorMessage });
+          console.log(error);
+          
           throw error;
         }
       },

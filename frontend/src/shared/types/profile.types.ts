@@ -3,12 +3,14 @@ export interface Profile {
   name: string;
   email: string;
   phone?: string;
-  preferredCurrency?: string;
+  currency?: string;
   language?: 'es' | 'en';
   theme?: 'light' | 'dark';
-  avatarUrl?: string;
-  emailVerified?: boolean;
+  avatar?: string;
+  isVerified?: boolean;
   phoneVerified?: boolean;
+  createdAt: string,
+  updateAt: string
 }
 
 export interface UpdateProfileInput {
