@@ -16,11 +16,38 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp",
         policy =>
         {
+<<<<<<< Updated upstream
             policy
                 .WithOrigins("http://localhost:5173") // URL del frontend
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
+=======
+            var raw = corsOrigins.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            // Acepta dominios con o sin esquema; si no traen http/https, agrega ambos
+            var normalized = raw.SelectMany(o =>
+                o.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || o.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+                    ? new[] { o }
+                    : new[] { $"https://{o}", $"http://{o}" }
+            ).ToArray();
+
+            if (normalized.Length > 0)
+            {
+                policy.WithOrigins(normalized).AllowAnyHeader().AllowAnyMethod();
+            }
+            else
+            {
+                policy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod();
+            }
+        }
+        else
+        {
+            // Fallback: permitir cualquier origen (útil para pruebas/despliegue inicial)
+            policy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod();
+        }
+    });
+>>>>>>> Stashed changes
 });
 
 
