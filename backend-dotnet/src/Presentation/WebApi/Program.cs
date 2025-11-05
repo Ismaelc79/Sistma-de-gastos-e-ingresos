@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Application.Interfaces;
 using Application.Services;
 using Infrastructure.DependencyInjection;
@@ -6,28 +8,23 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
+// CORS: permite orígenes definidos en CORS_ORIGINS (separados por coma).
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp",
-        policy =>
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        var corsOrigins = builder.Configuration["CORS_ORIGINS"]; // coma-separado
+        if (!string.IsNullOrWhiteSpace(corsOrigins))
         {
-<<<<<<< Updated upstream
-            policy
-                .WithOrigins("http://localhost:5173") // URL del frontend
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
-=======
             var raw = corsOrigins.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
             // Acepta dominios con o sin esquema; si no traen http/https, agrega ambos
             var normalized = raw.SelectMany(o =>
-                o.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || o.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+                o.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                o.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
                     ? new[] { o }
                     : new[] { $"https://{o}", $"http://{o}" }
             ).ToArray();
@@ -43,15 +40,11 @@ builder.Services.AddCors(options =>
         }
         else
         {
-            // Fallback: permitir cualquier origen (útil para pruebas/despliegue inicial)
+            // Fallback: permitir cualquier origen (útil para el despliegue inicial)
             policy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod();
         }
     });
->>>>>>> Stashed changes
 });
-
-
-
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -69,7 +62,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Ingrese el token JWT: **Bearer &lt;token&gt;**"
+        Description = "Ingrese el token JWT: **Bearer <token>**"
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -104,6 +97,9 @@ app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Health endpoint (para Render)
+app.MapGet("/health", () => Results.Ok("OK"));
 
 app.MapControllers();
 

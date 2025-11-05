@@ -1,0 +1,17 @@
+# Ignore build outputs and dev files
+**/bin
+**/obj
+**/.vs
+**/*.user
+**/*.suo
+**/.vscode
+.git
+.gitignore
+Dockerfile
+docker-compose*.yml
+.env
+node_modules
+frontend/dist
+**/coverage
+**/.DS_Store
+

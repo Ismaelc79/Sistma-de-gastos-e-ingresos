@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Input } from "../../../shared/ui";
 import type { Profile, UpdateProfileInput } from "../../../shared/types/profile.types";
+import type { User } from "../../../shared/types/auth.types";
+import { useAuthStore } from "../../../shared/stores/authStore";
 import { updateUser } from "../api/profile.api";
 
 async function getProfile(): Promise<Profile> {
@@ -15,17 +17,19 @@ async function getProfile(): Promise<Profile> {
 
 async function updateProfile(input: UpdateProfileInput): Promise<Profile> {
   const user = await updateUser(input);
-  let data = JSON.parse(localStorage.getItem("auth-storage") ?? " ");
-  data.state.user = user;
-
-  localStorage.setItem("auth-storage", JSON.stringify(data));
-
-  return user;
+  const persistedRaw = localStorage.getItem("auth-storage") ?? "";
+  const persisted = persistedRaw ? JSON.parse(persistedRaw) : { state: { user: {} } };
+  const selectedTheme = String(input.theme ?? persisted?.state?.user?.theme ?? 'light').toLowerCase();
+  const mergedUser = { ...persisted?.state?.user, ...user, theme: selectedTheme };
+  localStorage.setItem("auth-storage", JSON.stringify({ ...persisted, state: { ...persisted.state, user: mergedUser } }));
+  localStorage.setItem('ui-theme', selectedTheme);
+  return { ...user, theme: selectedTheme } as Profile;
 }
 
 export const ProfilePage = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [saving, setSaving] = useState(false);
+  const { setUser } = useAuthStore();
 
   useEffect(() => {
     getProfile().then(setProfile);
@@ -52,7 +56,30 @@ export const ProfilePage = () => {
       avatar: profile.avatar,
     });
 
-    setProfile(updated);
+    // Normaliza el theme a lowercase por compatibilidad
+    const normalizedTheme = String(profile.theme ?? updated.theme ?? '').toLowerCase() as 'light' | 'dark' | '';
+    const updatedNormalized = { ...updated, theme: normalizedTheme || updated.theme } as Profile;
+
+    setProfile(updatedNormalized);
+    const userForStore: User = {
+      id: updatedNormalized.id,
+      email: updatedNormalized.email,
+      name: updatedNormalized.name,
+      phone: updatedNormalized.phone,
+      preferredCurrency: updatedNormalized.currency,
+      language: updatedNormalized.language as any,
+      theme: (updatedNormalized.theme as any) ?? 'light',
+      avatar: updatedNormalized.avatar,
+      emailVerified: Boolean(updatedNormalized.isVerified),
+      phoneVerified: Boolean(updatedNormalized.phoneVerified),
+      twoFactorEnabled: false,
+    };
+    setUser(userForStore);
+
+    // Aplica el theme inmediatamente sin esperar re-render global
+    const root = document.documentElement;
+    if ((userForStore.theme as any)?.toLowerCase() === 'dark') root.classList.add('theme-dark');
+    else root.classList.remove('theme-dark');
     setSaving(false);
   };
 
