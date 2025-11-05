@@ -1,21 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Card, Input } from "../../../shared/ui";
-import type {
-  Category,
-  CategoryInput,
-  CategoryType,
-} from "../../../shared/types/category.types";
+import type { Category, CategoryInput } from "../../../shared/types/category.types";
 import { createCategory, getCategories } from "../api/categories.api";
 
 export const CategoriesPages = () => {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [type, setTypes] = useState(["Income", "Expense"]);
+  const [types] = useState(["Income", "Expense"]);
 
   //   const [categories, setCategories] = useState<TransactionCategory[]>([]);
   const [, setLoading] = useState(false);
   const [form, setForm] = useState<CategoryInput>({
     name: "",
-    type: type[0],
+    type: types[0],
   });
   //   const [filterType, setFilterType] = useState<'all' | TransactionType>('all');
 
@@ -48,7 +44,7 @@ export const CategoriesPages = () => {
 
     setCategories((s) => [...s, created]);
 
-    setForm((f) => ({ ...f, name: "", type: type[0] }));
+    setForm((f) => ({ ...f, name: "", type: types[0] }));
   };
 
   //   const handleDelete = async (id: string) => {
@@ -114,8 +110,8 @@ export const CategoriesPages = () => {
               value={form.type}
               className="w-full px-3 py-2 border border-dark-300 rounded-lg"
             >
-              {type.map((t) => (
-                <option value={t}>{t}</option>
+              {types.map((t) => (
+                <option key={t} value={t}>{t}</option>
               ))}
             </select>
           </div>

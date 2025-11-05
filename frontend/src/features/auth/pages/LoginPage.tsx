@@ -3,7 +3,7 @@ import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../shared/stores/authStore";
 import { Button, Input, Card } from "../../../shared/ui";
-import axios from "axios";
+
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -129,23 +129,10 @@ export const LoginPage = () => {
               error={formErrors.password}
               required
               autoComplete="current-password"
+              showPasswordToggle
             />
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-dark-300 rounded"
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 block text-sm text-dark-700"
-                >
-                  Remember me
-                </label>
-              </div>
-
+            <div className="flex items-center justify-end">
               <div className="text-sm">
                 <a
                   href="#"

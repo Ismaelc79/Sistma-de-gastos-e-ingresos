@@ -30,14 +30,14 @@ export interface Profile2 {
   updatedAt: string;
 }
 
-// export interface UpdateProfileInput {
-//   name?: string;
-//   phone?: string;
-//   preferredCurrency?: string;
-//   language?: "es" | "en";
-//   theme?: "light" | "dark";
-//   avatarUrl?: string;
-// }
+export interface UpdateProfileInput {
+  name?: string;
+  phone?: string;
+  currency?: string;
+  language?: "es" | "en" | string;
+  theme?: "light" | "dark";
+  avatar?: string;
+}
 
 export interface ProfileInput {
   name: string;
