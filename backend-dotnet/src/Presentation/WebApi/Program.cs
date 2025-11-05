@@ -13,14 +13,20 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp",
-        policy =>
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        var corsOrigins = builder.Configuration["CORS_ORIGINS"]; // coma-separado
+        if (!string.IsNullOrWhiteSpace(corsOrigins))
         {
-            policy
-                .WithOrigins("http://localhost:5173") // URL del frontend
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
+            var origins = corsOrigins.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            policy.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod();
+        }
+        else
+        {
+            // Fallback: permitir cualquier origen (útil para pruebas/despliegue inicial)
+            policy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod();
+        }
+    });
 });
 
 
@@ -77,6 +83,9 @@ app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Health endpoint (para Render)
+app.MapGet("/health", () => Results.Ok("OK"));
 
 app.MapControllers();
 
