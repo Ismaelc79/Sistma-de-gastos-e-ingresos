@@ -23,7 +23,7 @@ export const Button = ({
   const variantStyles = {
     primary: 'bg-primary-600 hover:bg-primary-700 text-white shadow-sm hover:shadow-md',
     secondary: 'bg-dark-700 hover:bg-dark-800 text-white shadow-sm hover:shadow-md',
-    outline: 'border-2 border-primary-600 text-primary-600 hover:bg-primary-50',
+    outline: 'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 btn-outline',
     danger: 'bg-red-600 hover:bg-red-700 text-white shadow-sm hover:shadow-md',
   };
 
