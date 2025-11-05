@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Card } from '../../../shared/ui';
-import { getTransactions } from '../../transactions/api/transactions.api';
-import type { Transaction } from '../../../shared/types/transaction.types';
+import { getTransactions, listCategories } from '../../transactions/api/transactions.api';
+import type { Transaction, TransactionCategory } from '../../../shared/types/transaction.types';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -26,24 +26,29 @@ function toMonthKey(d: string) {
 
 export const ReportsPage = () => {
   const [data, setData] = useState<Transaction[]>([]);
-  // Removed unused loading state to satisfy noUnusedLocals
+  const [categories, setCategories] = useState<TransactionCategory[]>([]);
 
   useEffect(() => {
     (async () => {
-      const tx = await getTransactions();
+      const [tx, cats] = await Promise.all([getTransactions(), listCategories()]);
       setData(tx);
+      setCategories(cats);
     })();
   }, []);
 
-  const months = Array.from(new Set(data.map((t) => toMonthKey(t.date)))).sort();
-  const byMonthIncome = months.map((m) => data.filter((t) => t.type === 'income' && toMonthKey(t.date) === m).reduce((s, t) => s + t.amount, 0));
-  const byMonthExpense = months.map((m) => data.filter((t) => t.type === 'expense' && toMonthKey(t.date) === m).reduce((s, t) => s + t.amount, 0));
+  const catMap = new Map(categories.map((c) => [c.id, c]));
+  const isIncome = (t: Transaction) => (catMap.get(t.categoryId)?.type ?? '').toLowerCase() === 'income';
+  const isExpense = (t: Transaction) => (catMap.get(t.categoryId)?.type ?? '').toLowerCase() === 'expense';
 
-  const categories = Array.from(new Set(data.map((t) => t.categoryName)));
-  const byCategory = categories.map((c) => data.filter((t) => t.type === 'expense' && t.categoryName === c).reduce((s, t) => s + t.amount, 0));
+  const months = Array.from(new Set(data.map((t) => toMonthKey(t.createdAt)))).sort();
+  const byMonthIncome = months.map((m) => data.filter((t) => isIncome(t) && toMonthKey(t.createdAt) === m).reduce((s, t) => s + t.amount, 0));
+  const byMonthExpense = months.map((m) => data.filter((t) => isExpense(t) && toMonthKey(t.createdAt) === m).reduce((s, t) => s + t.amount, 0));
 
-  const totalIncome = data.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-  const totalExpense = data.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+  const categoryNames = Array.from(new Set(data.map((t) => catMap.get(t.categoryId)?.name).filter((n): n is string => Boolean(n))));
+  const byCategory = categoryNames.map((c) => data.filter((t) => isExpense(t) && catMap.get(t.categoryId)?.name === c).reduce((s, t) => s + t.amount, 0));
+
+  const totalIncome = data.filter((t) => isIncome(t)).reduce((s, t) => s + t.amount, 0);
+  const totalExpense = data.filter((t) => isExpense(t)).reduce((s, t) => s + t.amount, 0);
 
   return (
     <div className="space-y-6">
@@ -74,7 +79,7 @@ export const ReportsPage = () => {
           <div className="h-72">
             <Doughnut
               data={{
-                labels: categories,
+                labels: categoryNames,
                 datasets: [
                   {
                     label: 'Expenses',

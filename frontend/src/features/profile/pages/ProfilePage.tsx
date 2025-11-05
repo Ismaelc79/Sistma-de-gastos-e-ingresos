@@ -1,14 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Input } from "../../../shared/ui";
-import type {
-  Profile,
-  UpdateProfileInput,
-} from "../../../shared/types/profile.types";
-import { delay, readJSON, writeJSON } from "../../../shared/lib/mock";
+import type { Profile, UpdateProfileInput } from "../../../shared/types/profile.types";
 import { updateUser } from "../api/profile.api";
-
-const USE_MOCKS = import.meta.env.VITE_USE_MOCKS === "true";
-const PROFILE_KEY = "mock-profile";
 
 async function getProfile(): Promise<Profile> {
   const storage = JSON.parse(localStorage.getItem("auth-storage") ?? "");
