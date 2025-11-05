@@ -1,13 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card } from "../../../shared/ui";
 import { getCategories } from "../../categories/api/categories.api";
 import { getTransactions } from "../../transactions/api/transactions.api";
 import type { Transaction } from "../../../shared/types/transaction.types";
 import type { Category } from "../../../shared/types/category.types";
+import { Link } from "react-router-dom";
+import { getSavingsRateForMonth } from "../../reports/api/reports.api";
 
 export const DashboardPage = () => {
   const [transacciones, setTransacciones] = useState<Transaction[]>([]);
   const [categorias, setCategorias] = useState<Category[]>([]);
+  const [savingsRate, setSavingsRate] = useState<number | null>(null);
+  const [savingsDelta, setSavingsDelta] = useState<number | null>(null);
 
   useEffect(() => {
     init();
@@ -17,6 +21,77 @@ export const DashboardPage = () => {
     setCategorias(await getCategories());
     setTransacciones(await getTransactions());
   };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const now = new Date();
+        const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const prevMonth = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+        const [last, prev] = await Promise.all([
+          getSavingsRateForMonth(lastMonth),
+          getSavingsRateForMonth(prevMonth),
+        ]);
+        setSavingsRate(Number(last.rate));
+        setSavingsDelta(Number(last.rate) - Number(prev.rate));
+      } catch (e) {
+        // In case summary API is unreachable, fallback to compute from last month data
+        try {
+          const now = new Date();
+          const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+          const end = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+          const inRange = (d: string) => {
+            const dt = new Date(d);
+            return dt >= start && dt <= end;
+          };
+          const income = transacciones
+            .filter((t) => inRange(t.createdAt) && categorias.find((c) => c.id === t.categoryId)?.type === "Income")
+            .reduce((s, t) => s + t.amount, 0);
+          const expense = transacciones
+            .filter((t) => inRange(t.createdAt) && categorias.find((c) => c.id === t.categoryId)?.type === "Expense")
+            .reduce((s, t) => s + t.amount, 0);
+          const rate = income > 0 ? ((income - expense) / income) * 100 : 0;
+          setSavingsRate(rate);
+          setSavingsDelta(0);
+        } catch {
+          setSavingsRate(null);
+          setSavingsDelta(null);
+        }
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categorias.length, transacciones.length]);
+
+  const recent = useMemo(() => {
+    return [...transacciones]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5);
+  }, [transacciones]);
+
+  const totalExpense = useMemo(() =>
+    transacciones
+      .filter((t) => categorias.find((c) => c.id === t.categoryId)?.type === "Expense")
+      .reduce((s, t) => s + t.amount, 0),
+    [transacciones, categorias]
+  );
+
+  const expenseByCategory = useMemo(() => {
+    const map = new Map<number, number>();
+    for (const c of categorias.filter((x) => x.type === "Expense")) map.set(c.id, 0);
+    for (const t of transacciones) {
+      const cat = categorias.find((c) => c.id === t.categoryId);
+      if (cat?.type === "Expense") {
+        map.set(t.categoryId, (map.get(t.categoryId) || 0) + t.amount);
+      }
+    }
+    return Array.from(map.entries());
+  }, [transacciones, categorias]);
+
+  const colorPalette = [
+    "#EF4444", "#F59E0B", "#10B981", "#3B82F6", "#8B5CF6", "#06B6D4", "#F43F5E", "#A3E635",
+  ];
+
+  const formatDateTime = (iso: string) => new Date(iso).toLocaleString();
 
   return (
     <div className="space-y-6">
@@ -152,8 +227,14 @@ export const DashboardPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-dark-600">Savings Rate</p>
-              <p className="text-2xl font-bold text-dark-900 mt-1">43%</p>
-              <p className="text-sm text-green-600 mt-1">+5% from last month</p>
+              <p className="text-2xl font-bold text-dark-900 mt-1">
+                {savingsRate === null ? '—' : `${savingsRate.toFixed(1)}%`}
+              </p>
+              {savingsDelta !== null && (
+                <p className={`text-sm mt-1 ${savingsDelta >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {savingsDelta >= 0 ? '+' : ''}{savingsDelta.toFixed(1)}% from previous month
+                </p>
+              )}
             </div>
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
               <svg
@@ -181,7 +262,7 @@ export const DashboardPage = () => {
             Recent Transactions
           </h2>
           <div className="space-y-4">
-            {transacciones.map((t, i) => (
+            {recent.map((t, i) => (
               <div key={i} className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
@@ -203,7 +284,7 @@ export const DashboardPage = () => {
                     <p className="text-sm font-medium text-dark-900">
                       {t.name}
                     </p>
-                    <p className="text-xs text-dark-500">Today, 3:30 PM</p>
+                    <p className="text-xs text-dark-500">{formatDateTime(t.createdAt)}</p>
                   </div>
                 </div>
                 {categorias.find((c) => c.id == t.categoryId)?.type ==
@@ -218,6 +299,13 @@ export const DashboardPage = () => {
                 )}
               </div>
             ))}
+            {transacciones.length > 5 && (
+              <div className="pt-2 text-right">
+                <Link to="/transactions/history" className="text-primary-600 hover:underline text-sm">
+                  Ver histórico de transacciones
+                </Link>
+              </div>
+            )}
           </div>
         </Card>
 
@@ -226,28 +314,24 @@ export const DashboardPage = () => {
             Spending by Category
           </h2>
           <div className="space-y-3">
-            {categorias.filter(f=> f.type == 'Expense')
-              .map((category,i) => (
-                <div key={category.name}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-dark-700">
-                      {category.name}
-                    </span>
-                    <span className="text-sm font-semibold text-dark-900">
-                      ${transacciones.filter(f=> f.categoryId == category.id).reduce((acc,item)=>{
-                          return acc + item.amount
-                      },0)}
-                    </span>
+            {categorias
+              .filter((f) => f.type === 'Expense')
+              .map((category, i) => {
+                const amount = expenseByCategory.find(([id]) => id === category.id)?.[1] || 0;
+                const percent = totalExpense > 0 ? (amount / totalExpense) * 100 : 0;
+                const color = colorPalette[i % colorPalette.length];
+                return (
+                  <div key={category.id}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-dark-700">{category.name}</span>
+                      <span className="text-sm font-semibold text-dark-900">${amount.toFixed(2)}</span>
+                    </div>
+                    <div className="w-full bg-dark-200 rounded-full h-2">
+                      <div className="h-2 rounded-full" style={{ width: `${percent}%`, backgroundColor: color }} />
+                    </div>
                   </div>
-                  <div className="w-full bg-dark-200 rounded-full h-2">
-                    <div
-                      // className={`${category.color} h-2 rounded-full`}
-                       className={`bg-[#50d71${i}] h-2 rounded-full`}
-                      // style={{ width: `${category.percent}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
           </div>
         </Card>
       </div>

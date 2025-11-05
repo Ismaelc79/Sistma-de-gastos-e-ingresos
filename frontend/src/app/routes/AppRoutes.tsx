@@ -3,6 +3,7 @@ import { LoginPage } from '../../features/auth/pages/LoginPage';
 import { RegisterPage } from '../../features/auth/pages/RegisterPage';
 import { DashboardPage } from '../../features/dashboard/pages/DashboardPage';
 import { TransactionsPage } from '../../features/transactions/pages/TransactionsPage';
+import { TransactionsHistoryPage } from '../../features/transactions/pages/TransactionsHistoryPage';
 import { ReportsPage } from '../../features/reports/pages/ReportsPage';
 import { ProfilePage } from '../../features/profile/pages/ProfilePage';
 
@@ -47,6 +48,17 @@ export const AppRoutes = () => {
             <ProtectedRoute>
               <MainLayout>
                 <TransactionsPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/transactions/history"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <TransactionsHistoryPage />
               </MainLayout>
             </ProtectedRoute>
           }

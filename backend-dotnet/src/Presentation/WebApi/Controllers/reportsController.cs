@@ -18,7 +18,7 @@ namespace WebApi.Controllers
         }
 
         [Authorize]
-        [HttpGet("/summary")]
+        [HttpGet("summary")]
         public async Task<IActionResult> Get(string categoryType, DateTime startDate, DateTime endDate)
         {
             // Extracts user ID from the JW token
