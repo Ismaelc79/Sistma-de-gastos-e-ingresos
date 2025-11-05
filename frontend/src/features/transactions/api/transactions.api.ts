@@ -43,69 +43,71 @@ export async function listCategories(): Promise<TransactionCategory[]> {
 }
 
 export async function getTransactions(filters?: TransactionFilters): Promise<Transaction[]> {
-  if (USE_MOCKS) {
-    await delay(200);
-    const all = readJSON<Transaction[]>(STORAGE_KEY, []);
-    let result = all;
-    if (filters?.type && filters.type !== 'all') {
-      result = result.filter((t) => t.type === filters.type);
-    }
-    if (filters?.from) {
-      result = result.filter((t) => new Date(t.date) >= new Date(filters.from!));
-    }
-    if (filters?.to) {
-      result = result.filter((t) => new Date(t.date) <= new Date(filters.to!));
-    }
-    if (filters?.categoryId) {
-      result = result.filter((t) => t.categoryId === filters.categoryId);
-    }
-    return result.sort((a, b) => +new Date(b.date) - +new Date(a.date));
-  }
-  const { data } = await axios.get('/transactions', { params: filters });
+  // if (USE_MOCKS) {
+  //   await delay(200);
+  //   const all = readJSON<Transaction[]>(STORAGE_KEY, []);
+  //   let result = all;
+  //   if (filters?.type && filters.type !== 'all') {
+  //     result = result.filter((t) => t.type === filters.type);
+  //   }
+  //   if (filters?.from) {
+  //     result = result.filter((t) => new Date(t.date) >= new Date(filters.from!));
+  //   }
+  //   if (filters?.to) {
+  //     result = result.filter((t) => new Date(t.date) <= new Date(filters.to!));
+  //   }
+  //   if (filters?.categoryId) {
+  //     result = result.filter((t) => t.categoryId === filters.categoryId);
+  //   }
+  //   return result.sort((a, b) => +new Date(b.date) - +new Date(a.date));
+  // }
+  const { data } = await axios.get('/transactions');
   return data;
 }
 
 export async function createTransaction(input: TransactionInput): Promise<Transaction> {
-  if (USE_MOCKS) {
-    await delay(200);
-    const list = readJSON<Transaction[]>(STORAGE_KEY, []);
-    const categories = readJSON<TransactionCategory[]>(CATEGORY_KEY, []);
-    const category = categories.find((c) => c.id === input.categoryId);
-    const item: Transaction = { id: crypto.randomUUID(), categoryName: category?.name || 'Unknown', ...input };
-    list.push(item);
-    writeJSON(STORAGE_KEY, list);
-    return item;
-  }
+  // if (USE_MOCKS) {
+  //   await delay(200);
+  //   const list = readJSON<Transaction[]>(STORAGE_KEY, []);
+  //   const categories = readJSON<TransactionCategory[]>(CATEGORY_KEY, []);
+  //   const category = categories.find((c) => c.id === input.categoryId);
+  //   const item: Transaction = { id: crypto.randomUUID(), categoryName: category?.name || 'Unknown', ...input };
+  //   list.push(item);
+  //   writeJSON(STORAGE_KEY, list);
+  //   return item;
+  // }
   const { data } = await axios.post('/transactions', input);
+  console.log(data);
+  
   return data;
 }
 
-export async function updateTransaction(id: string, input: Partial<TransactionInput>): Promise<Transaction> {
-  if (USE_MOCKS) {
-    await delay(200);
-    const list = readJSON<Transaction[]>(STORAGE_KEY, []);
-    const idx = list.findIndex((t) => t.id === id);
-    if (idx === -1) throw new Error('Not found');
-    const categories = readJSON<TransactionCategory[]>(CATEGORY_KEY, []);
-    const next = { ...list[idx], ...input } as Transaction;
-    if (input.categoryId) {
-      const cat = categories.find((c) => c.id === input.categoryId);
-      if (cat) next.categoryName = cat.name;
-    }
-    list[idx] = next;
-    writeJSON(STORAGE_KEY, list);
-    return next;
-  }
-  const { data } = await axios.put(`/transactions/${id}`, input);
-  return data;
-}
+// export async function updateTransaction(id: string, input: Partial<TransactionInput>): Promise<Transaction> {
+//   if (USE_MOCKS) {
+//     await delay(200);
+//     const list = readJSON<Transaction[]>(STORAGE_KEY, []);
+//     const idx = list.findIndex((t) => t.id === id);
+//     if (idx === -1) throw new Error('Not found');
+//     const categories = readJSON<TransactionCategory[]>(CATEGORY_KEY, []);
+//     const next = { ...list[idx], ...input } as Transaction;
+//     if (input.categoryId) {
+//       const cat = categories.find((c) => c.id === input.categoryId);
+//       if (cat) next.categoryName = cat.name;
+//     }
+//     list[idx] = next;
+//     writeJSON(STORAGE_KEY, list);
+//     return next;
+//   }
+//   const { data } = await axios.put(`/transactions/${id}`, input);
+//   return data;
+// }
 
-export async function deleteTransaction(id: string): Promise<void> {
-  if (USE_MOCKS) {
-    await delay(200);
-    const list = readJSON<Transaction[]>(STORAGE_KEY, []);
-    writeJSON(STORAGE_KEY, list.filter((t) => t.id !== id));
-    return;
-  }
-  await axios.delete(`/transactions/${id}`);
-}
+// export async function deleteTransaction(id: string): Promise<void> {
+//   if (USE_MOCKS) {
+//     await delay(200);
+//     const list = readJSON<Transaction[]>(STORAGE_KEY, []);
+//     writeJSON(STORAGE_KEY, list.filter((t) => t.id !== id));
+//     return;
+//   }
+//   await axios.delete(`/transactions/${id}`);
+// }

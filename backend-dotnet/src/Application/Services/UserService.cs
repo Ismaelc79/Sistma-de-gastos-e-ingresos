@@ -50,6 +50,11 @@ public class UserService : IUserService
         if (!string.IsNullOrEmpty(request.Currency))
             user.UpdateProfile(currency: new Currency(request.Currency));
 
+        if (!string.IsNullOrEmpty(request.Password) && !string.IsNullOrEmpty(request.NewPassword))
+        {
+            await ChangePasswordAsync(userId, request.Password, request.NewPassword);
+        }
+
         var updatedUser = await _unitOfWork.User.UpdateAsync(user);
         await _unitOfWork.SaveChangesAsync();
 

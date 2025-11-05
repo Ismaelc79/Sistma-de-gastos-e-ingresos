@@ -12,12 +12,12 @@ export const axiosInstance = axios.create({
 
 // Request interceptor to add token
 axiosInstance.interceptors.request.use(
-  (config: any) => {
+  (request: any) => {
     const token = localStorage.getItem('accessToken');
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (token ) {
+      request.headers.Authorization = `Bearer ${token}`;
     }
-    return config;
+    return request;
   },
   (error: AxiosError) => {
     return Promise.reject(error);
@@ -40,7 +40,10 @@ axiosInstance.interceptors.response.use(
         if (!refreshToken) {
           // No refresh token, redirect to login
           localStorage.clear();
-          window.location.href = '/login';
+          if (window.location.pathname != "/login" && window.location.pathname != "/register") {
+             window.location.href = '/login';
+          }
+         
           return Promise.reject(error);
         }
 
