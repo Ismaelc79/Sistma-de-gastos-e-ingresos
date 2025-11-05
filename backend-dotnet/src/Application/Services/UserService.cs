@@ -52,7 +52,15 @@ public class UserService : IUserService
 
         if (!string.IsNullOrEmpty(request.Password) && !string.IsNullOrEmpty(request.NewPassword))
         {
-            await ChangePasswordAsync(userId, request.Password, request.NewPassword);
+            // Hash la nueva contrasenia
+            if (!user.PasswordHash.Verify(request.Password))
+            {
+                throw new UnauthorizedAccessException("Contraseña actual incorrecta");
+            }
+
+            var newPasswordd = Password.CreateHashed(request.NewPassword);
+
+            user.ChangePassword(newPasswordd);
         }
 
         var updatedUser = await _unitOfWork.User.UpdateAsync(user);
