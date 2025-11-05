@@ -1,46 +1,55 @@
 using System;
 using System.Linq;
-using Application.Interfaces;
-using Application.Services;
 using Infrastructure.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// CORS: permite orígenes definidos en CORS_ORIGINS (separados por coma).
+// CORS: lee CORS_ORIGINS y además permite *.vercel.app para pruebas
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
         var corsOrigins = builder.Configuration["CORS_ORIGINS"]; // coma-separado
+
+        string[] normalized = Array.Empty<string>();
         if (!string.IsNullOrWhiteSpace(corsOrigins))
         {
             var raw = corsOrigins.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            normalized = raw
+                .SelectMany(o =>
+                    o.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                    o.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+                        ? new[] { o.TrimEnd('/') }
+                        : new[] { $"https://{o.TrimEnd('/')}", $"http://{o.TrimEnd('/')}" }
+                )
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
 
-            // Acepta dominios con o sin esquema; si no traen http/https, agrega ambos
-            var normalized = raw.SelectMany(o =>
-                o.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-                o.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
-                    ? new[] { o }
-                    : new[] { $"https://{o}", $"http://{o}" }
-            ).ToArray();
+        bool AllowAnyVercel(string origin)
+        {
+            try { return new Uri(origin).Host.EndsWith(".vercel.app", StringComparison.OrdinalIgnoreCase); }
+            catch { return false; }
+        }
 
-            if (normalized.Length > 0)
-            {
-                policy.WithOrigins(normalized).AllowAnyHeader().AllowAnyMethod();
-            }
-            else
-            {
-                policy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod();
-            }
+        if (normalized.Length > 0)
+        {
+            policy
+                .SetIsOriginAllowed(origin =>
+                    normalized.Contains(origin.TrimEnd('/'), StringComparer.OrdinalIgnoreCase) ||
+                    AllowAnyVercel(origin)
+                )
+                .AllowAnyHeader()
+                .AllowAnyMethod();
         }
         else
         {
-            // Fallback: permitir cualquier origen (útil para el despliegue inicial)
+            // Fallback: permitir todo (útil para despliegue inicial)
             policy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod();
         }
     });
@@ -81,12 +90,12 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Pass Configuration to Infrastructure
+// IoC
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -98,9 +107,10 @@ app.UseCors("AllowReactApp");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Health endpoint (para Render)
+// Health endpoint (Render)
 app.MapGet("/health", () => Results.Ok("OK"));
 
 app.MapControllers();
 
 app.Run();
+
