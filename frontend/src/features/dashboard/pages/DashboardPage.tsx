@@ -12,6 +12,7 @@ export const DashboardPage = () => {
   const [categorias, setCategorias] = useState<Category[]>([]);
   const [savingsRate, setSavingsRate] = useState<number | null>(null);
   const [savingsDelta, setSavingsDelta] = useState<number | null>(null);
+  const [period, setPeriod] = useState<'day' | 'week' | 'month' | 'all'>('month');
 
   useEffect(() => {
     init();
@@ -92,6 +93,59 @@ export const DashboardPage = () => {
   ];
 
   const formatDateTime = (iso: string) => new Date(iso).toLocaleString();
+
+  // Balance por periodo (día/semana/mes) y acumulado
+  const periodRange = useMemo(() => {
+    const now = new Date();
+    const start = new Date(now);
+    const end = new Date(now);
+    if (period === 'day') {
+      start.setHours(0, 0, 0, 0);
+      end.setHours(23, 59, 59, 999);
+    } else if (period === 'week') {
+      const day = (now.getDay() + 6) % 7; // Monday=0
+      start.setDate(now.getDate() - day);
+      start.setHours(0, 0, 0, 0);
+      end.setTime(start.getTime());
+      end.setDate(start.getDate() + 6);
+      end.setHours(23, 59, 59, 999);
+    } else if (period === 'month') {
+      start.setDate(1);
+      start.setHours(0, 0, 0, 0);
+      end.setMonth(start.getMonth() + 1, 0);
+      end.setHours(23, 59, 59, 999);
+    } else {
+      // all time
+      start.setTime(0);
+      end.setTime(8640000000000000); // Max date
+    }
+    return { start, end };
+  }, [period]);
+
+  const inRange = (d: string) => {
+    const dt = new Date(d);
+    return dt >= periodRange.start && dt <= periodRange.end;
+  };
+
+  const totalsPeriod = useMemo(() => {
+    const income = transacciones
+      .filter((t) => inRange(t.createdAt) && categorias.find((c) => c.id === t.categoryId)?.type === 'Income')
+      .reduce((s, t) => s + t.amount, 0);
+    const expense = transacciones
+      .filter((t) => inRange(t.createdAt) && categorias.find((c) => c.id === t.categoryId)?.type === 'Expense')
+      .reduce((s, t) => s + t.amount, 0);
+    return { income, expense, balance: income - expense };
+  }, [transacciones, categorias, periodRange.start.getTime(), periodRange.end.getTime()]);
+
+  const totalsAll = useMemo(() => {
+    const income = transacciones
+      .filter((t) => categorias.find((c) => c.id === t.categoryId)?.type === 'Income')
+      .reduce((s, t) => s + t.amount, 0);
+    const expense = transacciones
+      .filter((t) => categorias.find((c) => c.id === t.categoryId)?.type === 'Expense')
+      .reduce((s, t) => s + t.amount, 0);
+    return { income, expense, balance: income - expense };
+  }, [transacciones, categorias]);
 
   return (
     <div className="space-y-6">
@@ -255,9 +309,10 @@ export const DashboardPage = () => {
         </Card>
       </div>
 
-      {/* Recent Transactions */}
+      {/* Period Balance + Recent Transactions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+
+<Card>
           <h2 className="text-lg font-semibold text-dark-900 mb-4">
             Recent Transactions
           </h2>
@@ -309,7 +364,7 @@ export const DashboardPage = () => {
           </div>
         </Card>
 
-        <Card>
+<Card>
           <h2 className="text-lg font-semibold text-dark-900 mb-4">
             Spending by Category
           </h2>
@@ -334,6 +389,56 @@ export const DashboardPage = () => {
               })}
           </div>
         </Card>
+
+        <Card>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-dark-900">Balance por periodo</h2>
+            <div className="flex gap-2">
+              <button onClick={() => setPeriod('day')} className={`px-2 py-1 rounded text-sm border ${period==='day' ? 'bg-dark-900 text-white border-dark-900' : 'border-dark-300 text-dark-700 hover:bg-dark-100'}`}>Día</button>
+              <button onClick={() => setPeriod('week')} className={`px-2 py-1 rounded text-sm border ${period==='week' ? 'bg-dark-900 text-white border-dark-900' : 'border-dark-300 text-dark-700 hover:bg-dark-100'}`}>Semana</button>
+              <button onClick={() => setPeriod('month')} className={`px-2 py-1 rounded text-sm border ${period==='month' ? 'bg-dark-900 text-white border-dark-900' : 'border-dark-300 text-dark-700 hover:bg-dark-100'}`}>Mes</button>
+              <button onClick={() => setPeriod('all')} className={`px-2 py-1 rounded text-sm border ${period==='all' ? 'bg-dark-900 text-white border-dark-900' : 'border-dark-300 text-dark-700 hover:bg-dark-100'}`}>Acumulado</button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p className="text-sm text-dark-600 mb-1">Periodo seleccionado</p>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <p className="text-xs text-dark-600">Ingresos</p>
+                  <p className="text-lg font-semibold text-green-600">${totalsPeriod.income.toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-dark-600">Gastos</p>
+                  <p className="text-lg font-semibold text-red-600">${totalsPeriod.expense.toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-dark-600">Balance</p>
+                  <p className="text-lg font-semibold text-dark-900">${totalsPeriod.balance.toFixed(2)}</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p className="text-sm text-dark-600 mb-1">Acumulado</p>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <p className="text-xs text-dark-600">Ingresos</p>
+                  <p className="text-lg font-semibold text-green-600">${totalsAll.income.toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-dark-600">Gastos</p>
+                  <p className="text-lg font-semibold text-red-600">${totalsAll.expense.toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-dark-600">Balance</p>
+                  <p className="text-lg font-semibold text-dark-900">${totalsAll.balance.toFixed(2)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+
       </div>
     </div>
   );
