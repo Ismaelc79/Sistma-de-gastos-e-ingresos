@@ -428,4 +428,6 @@ FodyWeavers.xsd
 *.msp
 
 #Secret variable
-**/appsettings*.json
+appsettings.Development.json
+appsettings.Production.json
+appsettings.*.json
