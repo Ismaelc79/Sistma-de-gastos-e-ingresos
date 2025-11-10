@@ -24,7 +24,7 @@ export const useAuthStore = create<AuthStore>()(
       login: async (credentials: LoginRequest) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await axios.post<AuthResponse>(import.meta.env.VITE_API_URL + '/auth/login', credentials);
+          const response = await axios.post<AuthResponse>('/auth/login', credentials);
           const { user, accessToken, refreshToken } = response.data;
 
           // Store tokens in localStorage

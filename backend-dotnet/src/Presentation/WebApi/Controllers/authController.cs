@@ -52,7 +52,7 @@ namespace WebApi.Controllers
             try
             {
                 AuthResponse authResponse = await authService.RefreshTokenAsync(refreshTokenRequest);
-                return Ok(refreshTokenRequest);
+                return Ok(authResponse);
             }
             catch (Exception ex)
             {
