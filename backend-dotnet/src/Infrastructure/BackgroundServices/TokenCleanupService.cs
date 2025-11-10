@@ -1,11 +1,7 @@
-﻿using Domain.Interfaces;
+﻿using Dapper;
+using Infrastructure.Persistence.Context;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.BackgroundServices
 {
@@ -25,16 +21,24 @@ namespace Infrastructure.BackgroundServices
                 try
                 {
                     using var scope = _serviceProvider.CreateScope();
-                    var _unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                    var context = scope.ServiceProvider.GetRequiredService<DapperContext>();
 
-                    // Remove tokens that expired 7 days ago
-                    await _unitOfWork.RefreshToken.DeleteExpiredTokensAsync();
+                    using var connection = context.CreateConnection();
+
+                    const string sql = @"
+                        DELETE FROM [dbo].[RefreshToken]
+                        WHERE ExpiresAt < DATEADD(day, -7, GETUTCDATE());
+                    ";
+
+                    await connection.ExecuteAsync(sql);
+
+                    Console.WriteLine("[TokenCleanupService] ✔ Expired tokens removed.");
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"[TokenCleanupService] Error: {ex.Message}");
                 }
-                
+
                 await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
             }
         }
