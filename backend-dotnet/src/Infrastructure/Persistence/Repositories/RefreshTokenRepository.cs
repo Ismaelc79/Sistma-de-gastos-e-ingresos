@@ -99,7 +99,9 @@ namespace Infrastructure.Persistence.Repositories
                 WHERE DATEADD(DAY, -7, GETUTCDATE());
             ";
 
-            await _connection.ExecuteAsync(sql);
+            await _connection.ExecuteAsync(
+                sql,
+                _transaction);
         }
     }
 }
