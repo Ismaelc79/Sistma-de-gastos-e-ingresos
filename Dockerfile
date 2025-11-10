@@ -18,16 +18,16 @@ COPY backend-dotnet ./backend-dotnet
 # Publish
 RUN dotnet publish backend-dotnet/src/Presentation/WebApi/WebApi.csproj -c Release -o /app
 
-
 # -------- runtime --------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
-# Render will pass PORT=5000, so we just bind to 0.0.0.0:5000
-ENV ASPNETCORE_URLS=http://0.0.0.0:5000
+# Render provides PORT; bind to 0.0.0.0
+ENV ASPNETCORE_URLS=http://0.0.0.0:${PORT}
 
 COPY --from=build /app ./
 
-EXPOSE 5000
+EXPOSE 8080
 
+# Entry point (final DLL name from WebApi.csproj output)
 ENTRYPOINT ["dotnet", "WebApi.dll"]
