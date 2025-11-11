@@ -29,10 +29,25 @@ namespace Domain.Entities
 
         public void Update(int categoryId = 0, string? name = null, string? description = null, decimal amount = 0)
         {
-            if (string.IsNullOrWhiteSpace(name)) Name = name!;
-            if (string.IsNullOrWhiteSpace(description)) Description = description;
-            if (amount >= 0) Amount = amount;
-            if (categoryId > 0) CategoryId = categoryId;
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                Name = name!;
+            }
+
+            if (description != null)
+            {
+                Description = description;
+            }
+
+            if (amount > 0)
+            {
+                Amount = amount;
+            }
+
+            if (categoryId > 0)
+            {
+                CategoryId = categoryId;
+            }
         }
     }
 }
