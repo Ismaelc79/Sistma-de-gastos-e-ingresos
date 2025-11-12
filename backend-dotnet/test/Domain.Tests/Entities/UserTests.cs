@@ -58,7 +58,7 @@ public class UserTests
         new User(
             id: Ulid.NewUlid(),
             name: "Test User",
-            email: new Email("test@example.com"),
+            email: new Email("testfinance@yopmail.com"),
             password: Password.CreateHashed("Secret123!")
         );
 }
