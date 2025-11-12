@@ -1,4 +1,4 @@
-import { forwardRef, useState, useCallback } from 'react';
+import { forwardRef, useState, useCallback, useId } from 'react';
 import type { InputHTMLAttributes } from 'react';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -9,8 +9,10 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, helperText, className = '', showPasswordToggle = false, type = 'text', ...props }, ref) => {
+  ({ label, error, helperText, className = '', showPasswordToggle = false, type = 'text', id, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
+    const generatedId = useId();
+    const inputId = id ?? generatedId;
 
     const isPasswordType = type === 'password';
     const shouldShowToggle = showPasswordToggle && isPasswordType;
@@ -26,7 +28,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-dark-700 mb-1">
+          <label htmlFor={inputId} className="block text-sm font-medium text-dark-700 mb-1">
             {label}
             {props.required && <span className="text-red-500 ml-1">*</span>}
           </label>
@@ -35,6 +37,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             type={inputType}
+            id={inputId}
             className={`
               w-full px-4 py-2 pr-10
               border rounded-lg
@@ -53,6 +56,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               onClick={handleTogglePassword}
               tabIndex={-1}
               style={{ pointerEvents: 'auto' }}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-pressed={showPassword}
+              data-testid="password-toggle"
             >
               {showPassword ? (
                 <svg className="h-5 w-5 text-dark-400 hover:text-dark-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">

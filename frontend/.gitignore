@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Playwright E2E Testing
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+.env.e2e
+
+# Vitest Coverage
+coverage/
+*.lcov

@@ -55,3 +55,6 @@ Thumbs.db
 **/bin/
 **/obj/
 **/.vs/
+
+# Documentation images
+docs/image/

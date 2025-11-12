@@ -23,8 +23,15 @@ namespace Domain.Entities
 
         public void EditCategory(string name, string type)
         {
-            if (string.IsNullOrWhiteSpace(name)) Name = name;
-            if (string.IsNullOrWhiteSpace(type)) Type = type;
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                Name = name;
+            }
+
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                Type = type;
+            }
         }
     }
 }
