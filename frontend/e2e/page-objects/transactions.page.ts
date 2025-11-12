@@ -19,10 +19,10 @@ export class TransactionsPage {
   constructor(page: Page) {
     this.page = page;
     this.pageTitle = page.getByRole('heading', { name: /^transactions$/i });
-    this.nameInput = page.locator('input[type="name"]');
-    this.amountInput = page.locator('input[type="number"]');
-    this.categorySelect = page.locator('select');
-    this.descriptionInput = page.locator('label:has-text("Description")').locator('..').locator('input');
+    this.nameInput = page.getByLabel(/name/i).first();
+    this.amountInput = page.locator('input[type="number"]').first();
+    this.categorySelect = page.locator('select').first();
+    this.descriptionInput = page.getByLabel(/description/i).first();
     this.saveButton = page.getByRole('button', { name: /save transaction/i });
     this.transactionsTable = page.locator('table');
     this.filterAllButton = page.getByRole('button', { name: /^all$/i });
@@ -55,8 +55,11 @@ export class TransactionsPage {
     }
     
     await this.saveButton.click();
-    // Wait for transaction to be added
-    await this.page.waitForTimeout(500);
+    await this.transactionsTable
+      .locator('td')
+      .filter({ hasText: data.name })
+      .first()
+      .waitFor({ timeout: 5000 });
   }
 
   async filterBy(type: 'all' | 'income' | 'expense') {

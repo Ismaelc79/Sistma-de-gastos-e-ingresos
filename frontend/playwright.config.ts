@@ -1,10 +1,26 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const envFiles = ['.env.e2e', '.env'];
+for (const file of envFiles) {
+  const fullPath = path.resolve(__dirname, file);
+  if (fs.existsSync(fullPath)) {
+    dotenv.config({ path: fullPath });
+  }
+}
+
+const baseURL =
+  process.env.E2E_BASE_URL ||
+  process.env.VITE_APP_URL ||
+  'https://taigels-finance.vercel.app';
+
+const isLocal = baseURL.includes('localhost');
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -27,7 +43,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.VITE_APP_URL || 'http://localhost:5173',
+    baseURL,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -47,11 +63,13 @@ export default defineConfig({
     },
   ],
 
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-  },
+  /* Run dev server only when pointing to localhost */
+  webServer: isLocal
+    ? {
+        command: 'npm run dev',
+        url: 'http://localhost:5173',
+        reuseExistingServer: !process.env.CI,
+        timeout: 120 * 1000,
+      }
+    : undefined,
 });

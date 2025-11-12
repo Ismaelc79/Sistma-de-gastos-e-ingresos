@@ -25,8 +25,11 @@ export class CategoriesPage {
     await this.nameInput.fill(name);
     await this.typeSelect.selectOption(type);
     await this.saveButton.click();
-    // Wait for the category to appear in the table
-    await this.page.waitForTimeout(500);
+    await this.categoriesTable
+      .locator('td')
+      .filter({ hasText: name })
+      .first()
+      .waitFor({ timeout: 5000 });
   }
 
   async getCategoryCount(): Promise<number> {

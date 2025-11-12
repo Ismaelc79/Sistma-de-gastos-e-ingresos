@@ -1,17 +1,13 @@
 import { test, expect } from '@playwright/test';
-import { AuthPage } from './page-objects/auth.page';
 import { DashboardPage } from './page-objects/dashboard.page';
+import { ensureLoggedIn } from './utils/session';
 
 test.describe('Dashboard', () => {
-  let authPage: AuthPage;
   let dashboardPage: DashboardPage;
 
   test.beforeEach(async ({ page }) => {
-    authPage = new AuthPage(page);
     dashboardPage = new DashboardPage(page);
-    
-    // Note: In a real scenario, you would login with valid credentials
-    // For now, we'll test the UI elements assuming bypass auth or mock data
+    await ensureLoggedIn(page);
   });
 
   test('should display dashboard page title and description', async ({ page }) => {

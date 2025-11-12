@@ -1,11 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { TransactionsPage } from './page-objects/transactions.page';
+import { ensureLoggedIn } from './utils/session';
 
 test.describe('Transactions Management', () => {
   let transactionsPage: TransactionsPage;
 
   test.beforeEach(async ({ page }) => {
     transactionsPage = new TransactionsPage(page);
+    await ensureLoggedIn(page);
     await transactionsPage.goto();
   });
 

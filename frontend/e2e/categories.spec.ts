@@ -1,11 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { CategoriesPage } from './page-objects/categories.page';
+import { ensureLoggedIn } from './utils/session';
 
 test.describe('Categories Management', () => {
   let categoriesPage: CategoriesPage;
 
   test.beforeEach(async ({ page }) => {
     categoriesPage = new CategoriesPage(page);
+    await ensureLoggedIn(page);
     await categoriesPage.goto();
   });
 

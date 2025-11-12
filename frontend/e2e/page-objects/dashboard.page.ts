@@ -22,10 +22,10 @@ export class DashboardPage {
     this.totalExpensesCard = page.locator('text=Total Expenses').locator('..');
     this.savingsRateCard = page.locator('text=Savings Rate').locator('..');
     this.recentTransactions = page.locator('text=Recent Transactions').locator('..');
-    this.periodDayButton = page.getByRole('button', { name: /día/i });
-    this.periodWeekButton = page.getByRole('button', { name: /semana/i });
-    this.periodMonthButton = page.getByRole('button', { name: /mes/i });
-    this.periodAllButton = page.getByRole('button', { name: /acumulado/i });
+    this.periodDayButton = page.getByRole('button', { name: /(día|day)/i });
+    this.periodWeekButton = page.getByRole('button', { name: /(semana|week)/i });
+    this.periodMonthButton = page.getByRole('button', { name: /(mes|month)/i });
+    this.periodAllButton = page.getByRole('button', { name: /(acumulado|all)/i });
     this.spendingByCategory = page.locator('text=Spending by Category').locator('..');
   }
 
