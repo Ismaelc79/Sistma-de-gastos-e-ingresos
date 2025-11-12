@@ -122,6 +122,7 @@ export const LoginPage = () => {
 
             <Input
               label="Password"
+              name="password"
               type="password"
               placeholder="••••••••"
               value={formData.password}

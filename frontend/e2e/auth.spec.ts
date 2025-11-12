@@ -1,11 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { AuthPage } from './page-objects/auth.page';
+import { captureDebugScreenshot } from './utils/debug';
 
 test.describe('Authentication', () => {
   let authPage: AuthPage;
 
   test.beforeEach(async ({ page }) => {
     authPage = new AuthPage(page);
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+    await captureDebugScreenshot(page, testInfo, `auth-${testInfo.title}`);
   });
 
   test.describe('Login Page', () => {
@@ -36,14 +41,17 @@ test.describe('Authentication', () => {
       await authPage.emailInput.fill('invalid-email');
       await authPage.passwordInput.fill('password123');
       await authPage.submitButton.click();
-      
-      await expect(page.getByText(/email is invalid/i)).toBeVisible();
+
+      const isValid = await authPage.emailInput.evaluate((el: HTMLInputElement) => el.validity.valid);
+      expect(isValid).toBe(false);
+      const validationMsg = await authPage.emailInput.evaluate((el: HTMLInputElement) => el.validationMessage);
+      expect(validationMsg.length).toBeGreaterThan(0);
     });
 
     test('should show validation error for empty password', async ({ page }) => {
       await authPage.goto('/login');
       
-      await authPage.emailInput.fill('test@example.com');
+      await authPage.emailInput.fill('testfinance@yopmail.com');
       await authPage.submitButton.click();
       
       const passwordValidity = await authPage.passwordInput.evaluate((el: HTMLInputElement) => el.validity.valid);
@@ -59,8 +67,7 @@ test.describe('Authentication', () => {
       await expect(authPage.passwordInput).toHaveAttribute('type', 'password');
       
       // Click toggle button
-      const toggleButton = page.locator('button[type="button"]').first();
-      await toggleButton.click();
+      await authPage.passwordToggle.click();
       
       // Password should now be visible
       await expect(authPage.passwordInput).toHaveAttribute('type', 'text');
@@ -108,7 +115,10 @@ test.describe('Authentication', () => {
       await authPage.passwordInput.fill('password123');
       await authPage.submitButton.click();
       
-      await expect(page.getByText(/email is invalid/i)).toBeVisible();
+      const isValid = await authPage.emailInput.evaluate((el: HTMLInputElement) => el.validity.valid);
+      expect(isValid).toBe(false);
+      const validationMsg = await authPage.emailInput.evaluate((el: HTMLInputElement) => el.validationMessage);
+      expect(validationMsg.length).toBeGreaterThan(0);
     });
 
     test('should navigate to login page', async ({ page }) => {
@@ -129,8 +139,7 @@ test.describe('Authentication', () => {
       await expect(authPage.passwordInput).toHaveAttribute('type', 'password');
       
       // Click toggle button
-      const toggleButton = page.locator('button[type="button"]').first();
-      await toggleButton.click();
+      await authPage.passwordToggle.click();
       
       // Password should now be visible
       await expect(authPage.passwordInput).toHaveAttribute('type', 'text');

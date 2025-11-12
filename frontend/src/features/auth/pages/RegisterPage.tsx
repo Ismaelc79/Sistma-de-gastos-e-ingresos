@@ -144,6 +144,7 @@ export const RegisterPage = () => {
 
             <Input
               label="Password"
+              name="password"
               type="password"
               placeholder="••••••••"
               value={formData.password}
@@ -152,10 +153,12 @@ export const RegisterPage = () => {
               helperText="Must be at least 8 characters with uppercase, lowercase, and number"
               required
               autoComplete="new-password"
+              showPasswordToggle
             />
 
             <Input
               label="Confirm Password"
+              name="confirmPassword"
               type="password"
               placeholder="••••••••"
               value={formData.confirmPassword}
@@ -163,6 +166,7 @@ export const RegisterPage = () => {
               error={formErrors.confirmPassword}
               required
               autoComplete="new-password"
+              showPasswordToggle
             />
 
             <div className="flex items-start">

@@ -8,15 +8,17 @@ export class AuthPage {
   readonly errorMessage: Locator;
   readonly createAccountButton: Locator;
   readonly loginLink: Locator;
+  readonly passwordToggle: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.emailInput = page.locator('input[type="email"]');
-    this.passwordInput = page.locator('input[type="password"]').first();
+    this.emailInput = page.getByLabel(/email address/i).first();
+    this.passwordInput = page.locator('input[name="password"]').first();
     this.submitButton = page.locator('button[type="submit"]');
     this.errorMessage = page.locator('.bg-red-50');
     this.createAccountButton = page.getByRole('button', { name: /create account/i });
     this.loginLink = page.getByRole('link', { name: /sign in/i });
+    this.passwordToggle = page.getByTestId('password-toggle').first();
   }
 
   async goto(path: '/login' | '/register') {

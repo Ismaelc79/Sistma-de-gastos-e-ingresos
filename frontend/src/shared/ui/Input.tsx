@@ -56,6 +56,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               onClick={handleTogglePassword}
               tabIndex={-1}
               style={{ pointerEvents: 'auto' }}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-pressed={showPassword}
+              data-testid="password-toggle"
             >
               {showPassword ? (
                 <svg className="h-5 w-5 text-dark-400 hover:text-dark-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
