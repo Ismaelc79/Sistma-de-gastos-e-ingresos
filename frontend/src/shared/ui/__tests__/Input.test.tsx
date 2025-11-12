@@ -23,8 +23,8 @@ describe('Input', () => {
     const user = userEvent.setup();
     render(<Input label="Password" type="password" showPasswordToggle />);
 
-    const input = screen.getByLabelText(/password/i);
-    const toggleButton = screen.getByRole('button');
+    const input = screen.getByLabelText(/^password$/i);
+    const toggleButton = screen.getByTestId('password-toggle');
 
     expect(input).toHaveAttribute('type', 'password');
     await user.click(toggleButton);
