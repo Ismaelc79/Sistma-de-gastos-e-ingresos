@@ -78,13 +78,19 @@ describe('useAuthStore', () => {
     postMock.mockResolvedValue({ data: payload });
 
     await act(async () => {
-      await useAuthStore.getState().register({ name: 'Grace', email: 'g@example.com', password: '123456' });
+      await useAuthStore.getState().register({
+        name: 'Grace',
+        email: 'g@example.com',
+        password: '123456',
+        confirmPassword: '123456',
+      });
     });
 
     expect(postMock).toHaveBeenCalledWith('/auth/register', {
       name: 'Grace',
       email: 'g@example.com',
       password: '123456',
+      confirmPassword: '123456',
     });
     expect(useAuthStore.getState().isAuthenticated).toBe(true);
   });

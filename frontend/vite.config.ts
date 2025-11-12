@@ -1,6 +1,5 @@
-import { defineConfig } from 'vite';
+import { defineConfig, configDefaults } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import { configDefaults } from 'vitest/config';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -8,7 +7,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    threads: false,
+    pool: 'forks',
     css: true,
     setupFiles: './src/setupTests.ts',
     exclude: [...configDefaults.exclude, 'e2e/**'],
